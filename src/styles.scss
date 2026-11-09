@@ -1,1 +1,63 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'Nerko One';
+  src: url('../public/fonts/Nerko_One/NerkoOne-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nokora';
+  src: url('../public/fonts/Nokora/Nokora-VariableFont_wght.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mulish';
+  src: url('../public/fonts/Mulish/Mulish-VariableFont_wght.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 200 1000;
+  font-display: swap;
+}
+
+:root {
+  --font-heading: 'Nerko One', cursive;
+  --font-button: 'Nokora', sans-serif;
+  --font-body: 'Mulish', sans-serif;
+
+  --color-background: rgba(53, 39, 58, 1);
+  --color-surface: rgba(217, 217, 217, 0.08);
+  --color-accent: rgba(255, 207, 161, 1);
+  --color-text: rgba(250, 245, 254, 1);
+  --color-accent-soft: rgba(254, 233, 212, 1);
+  --color-accent-strong: rgba(255, 183, 112, 1);
+  --color-text-dark: rgba(34, 18, 39, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
