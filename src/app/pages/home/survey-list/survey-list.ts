@@ -15,13 +15,20 @@ export class SurveyList implements OnInit {
   protected readonly surveys = signal<SurveyListItem[]>([]);
   protected readonly status = signal<'loading' | 'ready' | 'error'>('loading');
   protected readonly selectedStatus = signal<'active' | 'past'>('active');
+  protected readonly selectedCategoryLabel = signal('');
+  protected readonly categories = computed(() => {
+    const categories = this.surveys().map((survey) => survey.category);
+    return [...new Set(categories)].sort((first, second) => first.localeCompare(second, 'en'));
+  });
   protected readonly visibleSurveys = computed(() => {
     const showPast = this.selectedStatus() === 'past';
+    const category = this.selectedCategoryLabel();
     const now = Date.now();
 
     return this.surveys().filter((survey) => {
       const hasEnded = survey.ends_at !== null && Date.parse(survey.ends_at) <= now;
-      return hasEnded === showPast;
+      const matchesCategory = category === '' || survey.category === category;
+      return hasEnded === showPast && matchesCategory;
     });
   });
 

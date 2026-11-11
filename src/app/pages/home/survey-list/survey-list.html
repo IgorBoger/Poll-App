@@ -20,17 +20,32 @@
     </div>
 
     <div class="survey-list__category-control">
-      <select class="survey-list__category-filter" aria-label="Sort by categories">
-        <option value="" hidden>Sort by categories</option>
-        <option value="all">All surveys</option>
-        <option value="team">Team activities</option>
-        <option value="health">Health &amp; wellness</option>
-        <option value="gaming">Gaming &amp; entertainment</option>
-      </select>
-      <span class="survey-list__category-arrow" aria-hidden="true">
-        <img src="images/survey-list/category-arrow-down.png" alt="" />
-        <img src="images/survey-list/category-arrow-down-accent.png" alt="" />
-      </span>
+      <div class="survey-list__category-trigger">
+        <select
+          #categorySelect
+          class="survey-list__category-filter"
+          aria-label="Sort by categories"
+          (change)="
+            selectedCategoryLabel.set(
+              categorySelect.value === 'all'
+                ? ''
+                : (categorySelect.selectedOptions.item(0)?.label ?? '')
+            )
+          "
+        >
+          <option value="" hidden>Sort by categories</option>
+          <option value="all">All surveys</option>
+          @for (category of categories(); track category) {
+            <option [value]="'category:' + category">{{ category }}</option>
+          }
+        </select>
+        <span class="survey-list__category-arrow" aria-hidden="true">
+          <img src="images/survey-list/category-arrow-down.png" alt="" />
+          <img src="images/survey-list/category-arrow-down-accent.png" alt="" />
+        </span>
+        <span class="survey-list__category-placeholder" aria-hidden="true">Sort by categories</span>
+      </div>
+      <p class="survey-list__selected-category">{{ selectedCategoryLabel() }}</p>
     </div>
   </div>
 
