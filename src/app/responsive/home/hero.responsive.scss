@@ -1,0 +1,64 @@
+@media (hover: hover) and (pointer: fine) and (min-width: 1025px) {
+  .hero__illustration:hover {
+    .hero__speech-bubble {
+      transform: scale(1.45);
+    }
+
+    .hero__question-mark {
+      transform: translate(-24px, -8px);
+    }
+
+    .hero__star {
+      transform: translate(-24px, 8px);
+    }
+
+    .hero__check {
+      transform: translate(48px, 8px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__button,
+  .hero__button-icon,
+  .hero__illustration img {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-block: 48px 80px;
+
+    &__content {
+      display: contents;
+    }
+
+    &__title {
+      grid-row: 1;
+    }
+
+    &__illustration {
+      grid-row: 2;
+      max-width: 250px;
+    }
+
+    &__description {
+      grid-row: 3;
+    }
+
+    &__button {
+      grid-row: 4;
+      justify-self: center;
+      margin-top: 24px;
+      background-color: var(--color-accent-strong);
+    }
+
+    &__button-icon {
+      width: 32px;
+      opacity: 1;
+    }
+  }
+}

@@ -1,3 +1,5 @@
+@use 'sass:meta';
+
 :host {
   display: block;
 }
@@ -21,8 +23,8 @@
     margin: 0;
     font-family: var(--font-heading);
     font-weight: 400;
-    font-size: 100px;
-    line-height: 89px;
+    font-size: clamp(62px, calc(47.13px + 4.13vw), 100px);
+    line-height: clamp(50px, calc(34.74px + 4.24vw), 89px);
     letter-spacing: 0;
     color: var(--color-accent-strong);
   }
@@ -31,7 +33,8 @@
     margin: 0;
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: 24px;
+    // font-size: 24px;
+    font-size: clamp(18px, calc(14.4px + 0.8vw), 24px);
     line-height: 1;
     letter-spacing: 0;
   }
@@ -74,7 +77,9 @@
     width: 0;
     overflow: hidden;
     opacity: 0;
-    transition: width 250ms ease, opacity 250ms ease;
+    transition:
+      width 250ms ease,
+      opacity 250ms ease;
 
     img {
       display: block;
@@ -95,7 +100,9 @@
       display: block;
       height: auto;
       pointer-events: none;
-      transition: transform 450ms ease, opacity 300ms ease;
+      transition:
+        transform 450ms ease,
+        opacity 300ms ease;
     }
   }
 
@@ -132,42 +139,4 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) and (min-width: 1025px) {
-  .hero__illustration:hover {
-    .hero__speech-bubble {
-      transform: scale(1.45);
-    }
-
-    .hero__question-mark {
-      transform: translate(-24px, -8px);
-    }
-
-    .hero__star {
-      transform: translate(-24px, 8px);
-    }
-
-    .hero__check {
-      transform: translate(48px, 8px);
-    }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__button,
-  .hero__button-icon,
-  .hero__illustration img {
-    transition: none;
-  }
-}
-
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    padding-block: 48px;
-
-    &__title {
-      font-size: clamp(40px, 8vw, 72px);
-      line-height: 0.95;
-    }
-  }
-}
+@include meta.load-css('../../../responsive/home/hero.responsive');
