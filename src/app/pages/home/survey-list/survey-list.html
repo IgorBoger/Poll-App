@@ -1,8 +1,22 @@
 <section class="survey-list" aria-label="All surveys">
   <div class="survey-list__toolbar">
     <div class="survey-list__statuses" role="group" aria-label="Survey status">
-      <button class="survey-list__status" type="button" aria-pressed="true">Active surveys</button>
-      <button class="survey-list__status" type="button" aria-pressed="false">Past surveys</button>
+      <button
+        class="survey-list__status"
+        type="button"
+        [attr.aria-pressed]="selectedStatus() === 'active'"
+        (click)="selectedStatus.set('active')"
+      >
+        Active surveys
+      </button>
+      <button
+        class="survey-list__status"
+        type="button"
+        [attr.aria-pressed]="selectedStatus() === 'past'"
+        (click)="selectedStatus.set('past')"
+      >
+        Past surveys
+      </button>
     </div>
 
     <div class="survey-list__category-control">
@@ -20,48 +34,29 @@
     </div>
   </div>
 
-  <div class="survey-list__scroll-frame">
-    <ul class="survey-list__cards">
-      <li class="survey-list__card">
-        <p class="survey-list__category">Team activities</p>
-        <h3 class="survey-list__title">Let’s Plan the Next Team Event Together</h3>
-        <p class="survey-list__deadline">Ends in 1 day</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Gaming &amp; entertainment</p>
-        <h3 class="survey-list__title">Gaming habits and favorite games!</h3>
-        <p class="survey-list__deadline">Ends in 3 days</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Health &amp; wellness</p>
-        <h3 class="survey-list__title">Fit &amp; wellness survey!</h3>
-        <p class="survey-list__deadline">Ends in 2 days</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Team activities</p>
-        <h3 class="survey-list__title">What should we do for our team lunch?</h3>
-        <p class="survey-list__deadline">Ends in 4 days</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Gaming &amp; entertainment</p>
-        <h3 class="survey-list__title">Choose the next game night theme</h3>
-        <p class="survey-list__deadline">Ends in 5 days</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Health &amp; wellness</p>
-        <h3 class="survey-list__title">Which wellness activities interest you?</h3>
-        <p class="survey-list__deadline">Ends in 6 days</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Team activities</p>
-        <h3 class="survey-list__title">Where should we go for our next team outing?</h3>
-        <p class="survey-list__deadline">Ends in 7 days</p>
-      </li>
-      <li class="survey-list__card">
-        <p class="survey-list__category">Gaming &amp; entertainment</p>
-        <h3 class="survey-list__title">Pick a game for the weekend tournament</h3>
-        <p class="survey-list__deadline">Ends in 8 days</p>
-      </li>
-    </ul>
-  </div>
+  @if (status() === 'loading') {
+    <p role="status">Loading surveys…</p>
+  } @else if (status() === 'error') {
+    <p role="alert">Could not load surveys. Please refresh the page to try again.</p>
+  } @else if (visibleSurveys().length === 0) {
+    <p>No surveys found.</p>
+  } @else {
+    <div class="survey-list__scroll-frame">
+      <ul class="survey-list__cards">
+        @for (survey of visibleSurveys(); track survey.id) {
+          <li class="survey-list__card">
+            <p class="survey-list__category">{{ survey.category }}</p>
+            <h3 class="survey-list__title">{{ survey.title }}</h3>
+            <p class="survey-list__deadline">
+              @if (survey.ends_at; as deadline) {
+                <time [attr.datetime]="deadline">{{ formatDeadline(deadline) }}</time>
+              } @else {
+                No deadline
+              }
+            </p>
+          </li>
+        }
+      </ul>
+    </div>
+  }
 </section>
