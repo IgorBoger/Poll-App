@@ -30,7 +30,10 @@
   --color-background: rgba(53, 39, 58, 1);
   --color-surface: rgba(217, 217, 217, 0.08);
   --color-accent: rgba(255, 207, 161, 1);
-  --color-text: rgba(250, 245, 254, 1);
+  --color-text: rgba(255, 255, 255, 1);
+  --color-highlight-card-background: rgba(250, 245, 254, 1);
+  --color-highlight-card-hover: rgba(244, 233, 251, 1);
+  --color-highlight-card-text: var(--color-background);
   --color-accent-soft: rgba(254, 233, 212, 1);
   --color-accent-strong: rgba(255, 183, 112, 1);
   --color-text-dark: rgba(34, 18, 39, 1);
