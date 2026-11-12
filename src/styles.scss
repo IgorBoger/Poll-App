@@ -28,6 +28,7 @@
   --font-body: 'Mulish', sans-serif;
 
   --color-background: rgba(53, 39, 58, 1);
+  --color-mobile-page-background: #fff;
   --color-surface: rgba(217, 217, 217, 0.08);
   --color-accent: rgba(255, 207, 161, 1);
   --color-text: rgba(255, 255, 255, 1);
@@ -50,6 +51,12 @@ body {
   font-family: var(--font-body);
   color: var(--color-text);
   background-color: var(--color-background);
+}
+
+@media (max-width: 900px) {
+  body {
+    background-color: var(--color-mobile-page-background);
+  }
 }
 
 h1,

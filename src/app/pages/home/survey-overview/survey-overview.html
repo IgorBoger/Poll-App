@@ -11,7 +11,7 @@
     } @else if (surveyHighlights().length === 0) {
       <p>No surveys are ending soon.</p>
     } @else {
-      <ul class="survey-overview__cards">
+      <ul class="survey-overview__cards" (wheel)="scrollCardsWithWheel($event)">
         @for (survey of surveyHighlights(); track survey.id) {
           <li class="survey-overview__card">
             <p class="survey-overview__category">{{ survey.category }}</p>

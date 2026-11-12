@@ -1,0 +1,25 @@
+@media (max-width: 900px) {
+  :host {
+    padding: 32px 0 0;
+  }
+
+  .survey-list__scroll-frame::before {
+    display: none;
+  }
+
+  .survey-list__cards {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .survey-list__status,
+  .survey-list__category-filter,
+  .survey-list__category-filter option,
+  .survey-list__category-arrow,
+  .survey-list__category-arrow img,
+  .survey-list__card {
+    transition: none;
+  }
+}

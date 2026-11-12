@@ -1,6 +1,9 @@
+@use 'sass:meta';
+
 :host {
   display: block;
-  padding: 32px clamp(0px, 4.2vw, 60px) 0;
+  // padding: 32px clamp(0px, 4.2vw, 60px) 0;
+  padding: 32px;
 }
 
 .survey-list {
@@ -27,7 +30,7 @@
     color: var(--color-highlight-card-text);
     font-family: var(--font-button);
     font-weight: 400;
-    font-size: 16px;
+    font-size: clamp(14px, calc(13.21739px + 0.21739vw), 16px);
     line-height: 1;
     cursor: pointer;
     transition: background-color 250ms ease;
@@ -259,7 +262,7 @@
   }
 
   &__title {
-    font-size: 24px;
+    font-size: clamp(20px, calc(18.43478px + 0.434783vw), 24px);
     font-weight: 700;
     line-height: 1;
   }
@@ -277,28 +280,4 @@
   }
 }
 
-@media (max-width: 900px) {
-  :host {
-    padding-inline: 0;
-  }
-
-  .survey-list__scroll-frame::before {
-    display: none;
-  }
-
-  .survey-list__cards {
-    grid-template-columns: 1fr;
-    max-height: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .survey-list__status,
-  .survey-list__category-filter,
-  .survey-list__category-filter option,
-  .survey-list__category-arrow,
-  .survey-list__category-arrow img,
-  .survey-list__card {
-    transition: none;
-  }
-}
+@include meta.load-css('../../../responsive/home/survey-list.responsive');

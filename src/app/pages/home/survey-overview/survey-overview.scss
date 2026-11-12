@@ -1,3 +1,5 @@
+@use 'sass:meta';
+
 :host {
   display: block;
   padding: 0 60px;
@@ -8,14 +10,14 @@
     margin: 0 0 48px;
     color: var(--color-accent-strong);
     font-family: var(--font-heading);
-    font-size: 72px;
+    font-size: clamp(54px, calc(34.13px + 4.13vw), 72px);
     line-height: 1;
     text-align: center;
   }
 
   &__subtitle {
     margin: 0 0 32px;
-    font-size: 32px;
+    font-size: clamp(24px, calc(18px + 1vw), 32px);
     font-weight: 500;
     line-height: 1;
   }
@@ -60,7 +62,7 @@
   }
 
   &__card-title {
-    font-size: 26px;
+    font-size: clamp(24px, calc(16px + 1vw), 26px);
     font-weight: 700;
   }
 
@@ -74,14 +76,4 @@
   }
 }
 
-@media (max-width: 900px) {
-  .survey-overview__cards {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .survey-overview__card {
-    transition: none;
-  }
-}
+@include meta.load-css('../../../responsive/home/survey-overview.responsive');
