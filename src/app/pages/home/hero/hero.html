@@ -5,7 +5,7 @@
       Create and share surveys in minutes – from team events to workplace culture.
       Collect opinions, engage your audience, and turn feedback into action.
     </p>
-    <button class="hero__button" type="button">
+    <button class="hero__button" type="button" (click)="newSurveyRequested.emit()">
       <span>New survey</span>
       <span class="hero__button-icon" aria-hidden="true">
         <img src="images/hero/add_circle.png" alt="" width="20" height="20" />
