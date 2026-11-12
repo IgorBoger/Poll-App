@@ -1,6 +1,10 @@
 @media (max-width: 900px) {
   :host {
-    padding: 32px 0 0;
+    padding: 40px 0 0;
+  }
+
+  .survey-list__toolbar {
+    gap: 48px;
   }
 
   .survey-list__scroll-frame::before {
@@ -10,6 +14,7 @@
   .survey-list__cards {
     grid-template-columns: 1fr;
     max-height: none;
+    padding: 0;
   }
 }
 

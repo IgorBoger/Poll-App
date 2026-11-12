@@ -1,20 +1,24 @@
-@media (hover: hover) and (pointer: fine) and (min-width: 1025px) {
+@mixin expanded-illustration {
+  .hero__speech-bubble {
+    transform: scale(1.45);
+  }
+
+  .hero__question-mark {
+    transform: translate(-20px, -8px);
+  }
+
+  .hero__star {
+    transform: translate(-20px, 8px);
+  }
+
+  .hero__check {
+    transform: translate(48px, 4px);
+  }
+}
+
+@media (width > 900px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .hero__illustration:hover {
-    .hero__speech-bubble {
-      transform: scale(1.45);
-    }
-
-    .hero__question-mark {
-      transform: translate(-24px, -8px);
-    }
-
-    .hero__star {
-      transform: translate(-24px, 8px);
-    }
-
-    .hero__check {
-      transform: translate(48px, 8px);
-    }
+    @include expanded-illustration;
   }
 }
 
@@ -43,6 +47,11 @@
     &__illustration {
       grid-row: 2;
       max-width: 250px;
+      @include expanded-illustration;
+
+      img {
+        transition: none;
+      }
     }
 
     &__description {
