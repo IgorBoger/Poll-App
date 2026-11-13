@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   imports: [],
   selector: 'main-survey-form',
-  styleUrl: './survey-form.scss',
+  styleUrls: ['./survey-form.scss', '../../../responsive/home/survey-form.responsive.scss'],
   templateUrl: './survey-form.html',
 })
 export class SurveyForm {}

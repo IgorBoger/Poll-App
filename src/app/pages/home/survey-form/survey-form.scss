@@ -1,4 +1,8 @@
 .survey-form {
+  &__brand {
+    display: none;
+  }
+
   &__overlay {
     position: fixed;
     inset: 0;
@@ -59,6 +63,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-top: 12px;
+  }
+
+  &__deadline {
+    margin-top: 6px;
   }
 
   &__category {
@@ -157,7 +165,7 @@
 
   label {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   :where(label:not(.survey-form__multiple)),
@@ -198,7 +206,6 @@
   }
 
   legend {
-    margin-bottom: 8px;
     padding: 0;
   }
 
@@ -235,16 +242,30 @@
     gap: 8px;
   }
 
-  &__multiple {
-    margin: 0;
+  &__answers-header &__multiple {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
     font: 400 14px / 1 var(--font-body);
+  }
+
+  &__checkbox {
+    display: inline-grid;
+    flex: none;
+
+    > * {
+      grid-area: 1 / 1;
+    }
+
+    img {
+      pointer-events: none;
+    }
 
     input {
       appearance: none;
       width: 15px;
       height: 15px;
       margin: 0;
-      background: url('/images/survey-form/checkbox-outline.png') center / contain no-repeat;
       cursor: pointer;
 
       &:checked {
@@ -283,7 +304,7 @@
     color: var(--color-text);
     background-color: transparent;
     text-decoration: underline;
-    margin-left: 32px;
+    margin: 12px 0 0 32px;
     border-radius: 0;
 
     &:hover {
@@ -300,6 +321,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 8px;
 
     &:has(> textarea) {
       align-items: flex-start;
@@ -355,5 +377,9 @@
   &__publish {
     color: var(--color-text-dark);
     background-color: var(--color-accent);
+
+    img {
+      display: none;
+    }
   }
 }
