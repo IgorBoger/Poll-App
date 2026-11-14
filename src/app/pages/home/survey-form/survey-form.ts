@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 @Component({
   imports: [],
@@ -6,4 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./survey-form.scss', '../../../responsive/home/survey-form.responsive.scss'],
   templateUrl: './survey-form.html',
 })
-export class SurveyForm {}
+export class SurveyForm {
+  readonly cancelRequested = output<void>();
+
+  onCancelClick() {
+    this.cancelRequested.emit();
+  }
+}

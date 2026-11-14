@@ -13,4 +13,9 @@ import { SurveyForm } from './survey-form/survey-form';
 })
 export class Home {
   readonly isSurveyFormOpen = signal(false);
+
+  onCancel() {
+    console.log('Cancel ist in Home angekommen');
+    this.isSurveyFormOpen.set(false);
+  }
 }

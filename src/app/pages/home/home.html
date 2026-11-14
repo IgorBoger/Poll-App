@@ -3,7 +3,7 @@
   <main-hero (newSurveyRequested)="isSurveyFormOpen.set(true)"></main-hero>
 
   @if (isSurveyFormOpen()) {
-    <main-survey-form></main-survey-form>
+    <main-survey-form (cancelRequested)="onCancel()"></main-survey-form>
   }
   <main-survey-overview></main-survey-overview>
   <main-survey-list></main-survey-list>
