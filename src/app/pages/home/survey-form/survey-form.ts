@@ -31,4 +31,12 @@ export class SurveyForm {
       allowMultipleAnswers: false,
     });
   }
+
+  onAddAnswerClick(question: { answers: string[] }) {
+    question.answers.push('');
+  }
+
+  answerLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
 }
