@@ -86,77 +86,87 @@
           </div>
         </div>
 
-        <fieldset class="survey-form__question">
-          <legend>
-            <span class="survey-form__field-action">
-              1. Question
-              <button
-                class="survey-form__delete"
-                type="button"
-                aria-label="Clear question 1"
-                disabled
-              >
-                <img src="images/survey-form/delete.png" width="18" height="20" alt="" />
-                <img src="images/survey-form/delete-dark.png" width="18" height="20" alt="" />
-              </button>
-            </span>
-          </legend>
-          <input name="question" type="text" aria-label="Question 1" required />
+        @for (item of questions; track item.id) {
+          <fieldset class="survey-form__question">
+            <legend>
+              <span class="survey-form__field-action">
+                {{ $index + 1 }}. Question
+                <button
+                  class="survey-form__delete"
+                  type="button"
+                  aria-label="Clear question {{ $index + 1 }}"
+                  disabled
+                >
+                  <img src="images/survey-form/delete.png" width="18" height="20" alt="" />
+                  <img src="images/survey-form/delete-dark.png" width="18" height="20" alt="" />
+                </button>
+              </span>
+            </legend>
+            <input name="question" type="text" aria-label="Question {{ $index + 1 }}" required />
 
-          <div class="survey-form__answers" role="group" aria-labelledby="survey-answers-label">
-            <div class="survey-form__answers-header">
-              <span id="survey-answers-label">Answers</span
-              ><label class="survey-form__multiple">
-                <span class="survey-form__checkbox">
-                  <input name="multipleAnswers" type="checkbox" />
-                  <img
-                    src="images/survey-form/checkbox-outline.png"
-                    width="15"
-                    height="15"
-                    alt=""
-                  />
-                </span>
-                Allow multiple answers
-              </label>
-            </div>
-            <div class="survey-form__field-action">
-              <label class="survey-form__answer">
-                <span aria-hidden="true">A.</span>
-                <input name="answerA" type="text" aria-label="Answer A" required />
-              </label>
-              <button
-                class="survey-form__delete"
-                type="button"
-                aria-label="Remove answer A"
-                disabled
-              >
-                <img src="images/survey-form/delete.png" width="18" height="20" alt="" />
-                <img src="images/survey-form/delete-dark.png" width="18" height="20" alt="" />
+            <div
+              class="survey-form__answers"
+              role="group"
+              aria-labelledby="survey-answers-label-{{ $index + 1 }}"
+            >
+              <div class="survey-form__answers-header">
+                <span id="survey-answers-label-{{ $index + 1 }}">Answers</span
+                ><label class="survey-form__multiple">
+                  <span class="survey-form__checkbox">
+                    <input name="multipleAnswers" type="checkbox" />
+                    <img
+                      src="images/survey-form/checkbox-outline.png"
+                      width="15"
+                      height="15"
+                      alt=""
+                    />
+                  </span>
+                  Allow multiple answers
+                </label>
+              </div>
+              <div class="survey-form__field-action">
+                <label class="survey-form__answer">
+                  <span aria-hidden="true">A.</span>
+                  <input name="answerA" type="text" aria-label="Answer A" required />
+                </label>
+                <button
+                  class="survey-form__delete"
+                  type="button"
+                  aria-label="Remove answer A"
+                  disabled
+                >
+                  <img src="images/survey-form/delete.png" width="18" height="20" alt="" />
+                  <img src="images/survey-form/delete-dark.png" width="18" height="20" alt="" />
+                </button>
+              </div>
+              <div class="survey-form__field-action">
+                <label class="survey-form__answer">
+                  <span aria-hidden="true">B.</span>
+                  <input name="answerB" type="text" aria-label="Answer B" required />
+                </label>
+                <button
+                  class="survey-form__delete"
+                  type="button"
+                  aria-label="Remove answer B"
+                  disabled
+                >
+                  <img src="images/survey-form/delete.png" width="18" height="20" alt="" />
+                  <img src="images/survey-form/delete-dark.png" width="18" height="20" alt="" />
+                </button>
+              </div>
+              <button class="survey-form__add-answer" type="button" disabled>
+                Add answer
+                <img src="images/survey-form/add-answer.png" width="16" height="16" alt="" />
               </button>
             </div>
-            <div class="survey-form__field-action">
-              <label class="survey-form__answer">
-                <span aria-hidden="true">B.</span>
-                <input name="answerB" type="text" aria-label="Answer B" required />
-              </label>
-              <button
-                class="survey-form__delete"
-                type="button"
-                aria-label="Remove answer B"
-                disabled
-              >
-                <img src="images/survey-form/delete.png" width="18" height="20" alt="" />
-                <img src="images/survey-form/delete-dark.png" width="18" height="20" alt="" />
-              </button>
-            </div>
-            <button class="survey-form__add-answer" type="button" disabled>
-              Add answer
-              <img src="images/survey-form/add-answer.png" width="16" height="16" alt="" />
-            </button>
-          </div>
-        </fieldset>
+          </fieldset>
+        }
 
-        <button class="survey-form__secondary survey-form__add-question" type="button" disabled>
+        <button
+          (click)="onNextQuestionClick()"
+          class="survey-form__secondary survey-form__add-question"
+          type="button"
+        >
           Add next question
           <img src="images/survey-form/add-question.png" width="20" height="20" alt="" />
         </button>
