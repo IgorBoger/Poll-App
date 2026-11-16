@@ -1,14 +1,15 @@
 import { Component, output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  imports: [],
+  imports: [FormsModule],
   selector: 'main-survey-form',
   styleUrls: ['./survey-form.scss', '../../../responsive/home/survey-form.responsive.scss'],
   templateUrl: './survey-form.html',
 })
 export class SurveyForm {
   readonly cancelRequested = output<void>();
-
+  private nextQuestionId = 2;
   questions = [
     {
       id: 1,
@@ -23,7 +24,8 @@ export class SurveyForm {
   }
 
   onNextQuestionClick() {
-    const nextId = this.questions.length + 1;
+    const nextId = this.nextQuestionId;
+    this.nextQuestionId += 1;
     this.questions.push({
       id: nextId,
       text: '',
@@ -38,5 +40,24 @@ export class SurveyForm {
 
   answerLetter(index: number): string {
     return String.fromCharCode(65 + index);
+  }
+
+  onDeleteQuestion(questionIndex: number) {
+    if (questionIndex === 0) {
+      this.questions[0].text = '';
+      this.questions[0].allowMultipleAnswers = false;
+      this.questions[0].answers.fill('');
+      return;
+    }
+    this.questions.splice(questionIndex, 1);
+  }
+
+  onDeleteAnswer(question: { answers: string[] }, answerIndex: number) {
+    if (question.answers.length <= 2) {
+      question.answers[answerIndex] = '';
+      return;
+    }
+
+    question.answers.splice(answerIndex, 1);
   }
 }
