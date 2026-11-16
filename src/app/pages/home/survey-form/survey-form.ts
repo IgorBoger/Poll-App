@@ -18,6 +18,9 @@ export class SurveyForm {
       allowMultipleAnswers: false,
     },
   ];
+  surveyName = '';
+  surveyDeadline = '';
+  surveyDescription = '';
 
   onCancelClick() {
     this.cancelRequested.emit();
