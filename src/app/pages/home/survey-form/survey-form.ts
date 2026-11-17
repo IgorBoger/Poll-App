@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, isDevMode, output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 
 @Component({
@@ -64,15 +64,20 @@ export class SurveyForm {
     question.answers.splice(answerIndex, 1);
   }
 
-  onPublish(form: NgForm) {
+  onPublish(form: NgForm, publishButton: HTMLButtonElement, publishedDialog: HTMLDialogElement) {
     if (form.invalid) {
       form.control.markAllAsTouched();
       return;
     }
-    // Implement the publish logic here
-    console.log('Survey Name:', this.surveyName);
-    console.log('Survey Deadline:', this.surveyDeadline);
-    console.log('Survey Description:', this.surveyDescription);
-    console.log('Questions:', this.questions);
+    if (isDevMode()) {
+      this.openPublishedDialog(publishButton, publishedDialog);
+    }
+  }
+
+  private openPublishedDialog(publishButton: HTMLButtonElement, publishedDialog: HTMLDialogElement) {
+    const buttonBounds = publishButton.getBoundingClientRect();
+    publishedDialog.style.setProperty('--publish-right', `${buttonBounds.right}px`);
+    publishedDialog.style.setProperty('--publish-bottom', `${buttonBounds.bottom}px`);
+    publishedDialog.showModal();
   }
 }

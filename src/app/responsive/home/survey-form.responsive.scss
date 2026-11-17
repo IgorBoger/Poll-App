@@ -130,7 +130,9 @@
       background-color: var(--color-accent-strong);
 
       img {
-        display: block;
+        width: 18px;
+        margin-inline-start: 10px;
+        opacity: 1;
       }
     }
 

@@ -21,7 +21,7 @@
     </header>
 
     <!-- <form> -->
-    <form #surveyForm="ngForm" (ngSubmit)="onPublish(surveyForm)">
+    <form #surveyForm="ngForm" (ngSubmit)="onPublish(surveyForm, publishButton, publishedDialog)">
       <div class="survey-form__fields">
         <div>
           <label for="survey-name">Survey name</label>
@@ -220,11 +220,23 @@
       </div>
 
       <footer class="survey-form__footer">
-        <button class="survey-form__publish" type="submit" [disabled]="surveyForm.invalid">
+        <button #publishButton class="survey-form__publish" type="submit" [disabled]="surveyForm.invalid">
           Publish
           <img src="images/survey-form/check.png" width="18" height="16" alt="" />
         </button>
       </footer>
     </form>
+    <dialog
+      #publishedDialog
+      class="survey-form__published"
+      aria-labelledby="survey-published-message"
+    >
+      <p id="survey-published-message">Your survey is now<br />published</p>
+      <form method="dialog" ngNoForm>
+        <button type="submit" aria-label="Close confirmation">
+          <img src="images/survey-form/close.png" width="14" height="14" alt="" />
+        </button>
+      </form>
+    </dialog>
   </section>
 </div>
