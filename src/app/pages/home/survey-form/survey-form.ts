@@ -1,5 +1,5 @@
 import { Component, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 
 @Component({
   imports: [FormsModule],
@@ -62,5 +62,17 @@ export class SurveyForm {
     }
 
     question.answers.splice(answerIndex, 1);
+  }
+
+  onPublish(form: NgForm) {
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+      return;
+    }
+    // Implement the publish logic here
+    console.log('Survey Name:', this.surveyName);
+    console.log('Survey Deadline:', this.surveyDeadline);
+    console.log('Survey Description:', this.surveyDescription);
+    console.log('Questions:', this.questions);
   }
 }

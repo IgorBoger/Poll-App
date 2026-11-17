@@ -1,4 +1,23 @@
 .survey-form {
+  --answer-letter-width: 22.5px;
+  --answer-column-gap: 0px;
+
+  &__error {
+    display: block;
+    color: var(--color-error);
+    font: 400 14px / 1.25 var(--font-body);
+    visibility: hidden;
+
+    &--visible {
+      visibility: visible;
+    }
+
+    &--answer {
+      padding-inline-start: calc(var(--answer-letter-width) + var(--answer-column-gap));
+      margin-block-end: 4px;
+    }
+  }
+
   &__brand {
     display: none;
   }
@@ -62,7 +81,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    margin-top: 12px;
+    // margin-top: 12px;
   }
 
   &__deadline {
@@ -222,6 +241,10 @@
     font: 400 16px / 16px var(--font-body);
   }
 
+  &__question > input + &__error {
+    margin-block-start: 4px;
+  }
+
   &__answers {
     margin-top: 16px;
   }
@@ -343,19 +366,20 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 
     &:has(> textarea) {
       align-items: flex-start;
     }
 
     &:has(> .survey-form__answer) {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .survey-form__answer {
       display: grid;
-      grid-template-columns: 1.25em minmax(0, 1fr);
+      grid-template-columns: var(--answer-letter-width) minmax(0, 1fr);
+      column-gap: var(--answer-column-gap);
       flex: 1;
       min-width: 0;
       margin: 0;

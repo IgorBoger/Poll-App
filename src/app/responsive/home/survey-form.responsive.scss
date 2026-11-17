@@ -102,6 +102,10 @@
       row-gap: 8px;
     }
 
+    &__error--answer {
+      padding-inline-start: 0;
+    }
+
     textarea {
       min-height: 108px;
       margin-bottom: 8px;
