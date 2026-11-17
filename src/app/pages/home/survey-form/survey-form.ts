@@ -38,6 +38,7 @@ export class SurveyForm {
   }
 
   onAddAnswerClick(question: { answers: string[] }) {
+    if (question.answers.length >= 6) return;
     question.answers.push('');
   }
 
@@ -74,7 +75,10 @@ export class SurveyForm {
     }
   }
 
-  private openPublishedDialog(publishButton: HTMLButtonElement, publishedDialog: HTMLDialogElement) {
+  private openPublishedDialog(
+    publishButton: HTMLButtonElement,
+    publishedDialog: HTMLDialogElement,
+  ) {
     const buttonBounds = publishButton.getBoundingClientRect();
     publishedDialog.style.setProperty('--publish-right', `${buttonBounds.right}px`);
     publishedDialog.style.setProperty('--publish-bottom', `${buttonBounds.bottom}px`);

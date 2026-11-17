@@ -46,8 +46,11 @@
           </div>
           <span
             class="survey-form__error"
-            [class.survey-form__error--visible]="surveyNameControl.touched && surveyNameControl.hasError('required')"
-          >Enter a survey name.</span>
+            [class.survey-form__error--visible]="
+              surveyNameControl.touched && surveyNameControl.hasError('required')
+            "
+            >Enter a survey name.</span
+          >
 
           <div class="survey-form__settings">
             <div class="survey-form__deadline">
@@ -140,8 +143,11 @@
 
             <span
               class="survey-form__error"
-              [class.survey-form__error--visible]="questionControl.touched && questionControl.hasError('required')"
-            >Enter a question.</span>
+              [class.survey-form__error--visible]="
+                questionControl.touched && questionControl.hasError('required')
+              "
+              >Enter a question.</span
+            >
 
             <div
               class="survey-form__answers"
@@ -173,6 +179,7 @@
                   <label class="survey-form__answer">
                     <span aria-hidden="true">{{ answerLetter($index) }}.</span>
                     <input
+                      id="answer-{{ item.id }}-{{ $index }}"
                       #answerControl="ngModel"
                       name="answer{{ item.id }}-{{ answerLetter($index) }}"
                       [(ngModel)]="item.answers[$index]"
@@ -194,17 +201,29 @@
 
                 <span
                   class="survey-form__error survey-form__error--answer"
-                  [class.survey-form__error--visible]="answerControl.touched && answerControl.hasError('required')"
-                >Enter an answer.</span>
+                  [class.survey-form__error--visible]="
+                    answerControl.touched && answerControl.hasError('required')
+                  "
+                  >Enter an answer.</span
+                >
               }
-              <button
-                (click)="onAddAnswerClick(item)"
-                class="survey-form__add-answer"
-                type="button"
-              >
-                Add answer
-                <img src="images/survey-form/add-answer.png" width="16" height="16" alt="" />
-              </button>
+              <div class="survey-form__answer-actions">
+                <button
+                  [disabled]="item.answers.length >= 6"
+                  (click)="onAddAnswerClick(item)"
+                  class="survey-form__add-answer"
+                  type="button"
+                >
+                  Add answer
+                  <img src="images/survey-form/add-answer.png" width="16" height="16" alt="" />
+                </button>
+                <span
+                  class="survey-form__answer-hint"
+                  [class.survey-form__answer-hint--visible]="item.answers.length >= 3"
+                >
+                  You can add up to 6 answer fields.
+                </span>
+              </div>
             </div>
           </fieldset>
         }
@@ -220,7 +239,12 @@
       </div>
 
       <footer class="survey-form__footer">
-        <button #publishButton class="survey-form__publish" type="submit" [disabled]="surveyForm.invalid">
+        <button
+          #publishButton
+          class="survey-form__publish"
+          type="submit"
+          [disabled]="surveyForm.invalid"
+        >
           Publish
           <img src="images/survey-form/check.png" width="18" height="16" alt="" />
         </button>
