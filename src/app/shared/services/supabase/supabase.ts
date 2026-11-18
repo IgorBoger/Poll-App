@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import type { SurveyListItem } from './survey-list-item';
 import type { SurveyHighlight } from './survey-highlight';
+import type { NewSurvey } from './new-survey';
 
 const ENDING_SOON_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const HIGHLIGHT_LIMIT = 3;
@@ -12,6 +13,19 @@ export class Supabase {
   supabaseUrl = 'https://eowabjsykssvvxmczlwy.supabase.co';
   supabaseKey = 'sb_publishable_7w6aAfv7c6X_I0FHwOOnDQ_cMYIZVA4';
   private readonly supabase = createClient(this.supabaseUrl, this.supabaseKey);
+
+  async createSurvey(survey: NewSurvey): Promise<void> {
+    const { error } = await this.supabase.rpc('create_survey', {
+      p_title: survey.title,
+      p_category: survey.category,
+      p_description: survey.description,
+      p_ends_at: survey.endsAt,
+      p_questions: survey.questions,
+    });
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
 
   async getSurveyHighlights(from: number): Promise<PostgrestSingleResponse<SurveyHighlight[]>> {
     const deadlineLimit: number = from + ENDING_SOON_WINDOW_MS;

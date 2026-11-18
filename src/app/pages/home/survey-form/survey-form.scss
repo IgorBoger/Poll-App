@@ -1,4 +1,3 @@
-@use '../category-dropdown';
 .survey-form {
   --answer-letter-width: 24px;
   --answer-column-gap: 0px;
@@ -90,11 +89,7 @@
     margin-top: 6px;
   }
 
-  @include category-dropdown.category-dropdown(".survey-form");
 
-  &__category-filter:not(:hover, :open, :active) {
-    background-color: transparent;
-  }
 
   label {
     display: block;

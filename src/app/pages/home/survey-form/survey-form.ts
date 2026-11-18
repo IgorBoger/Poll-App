@@ -1,15 +1,26 @@
-import { Component, isDevMode, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { Supabase } from '../../../shared/services/supabase/supabase';
+import type { NewSurvey } from '../../../shared/services/supabase/new-survey';
 
 @Component({
   imports: [FormsModule],
   selector: 'main-survey-form',
-  styleUrls: ['./survey-form.scss', '../../../responsive/home/survey-form.responsive.scss'],
+  styleUrls: [
+    './survey-form.scss',
+    './survey-form-category.scss',
+    '../../../responsive/home/survey-form.responsive.scss',
+  ],
   templateUrl: './survey-form.html',
 })
 export class SurveyForm {
+  private readonly supabase = inject(Supabase);
+  readonly isSaving = signal(false);
+  readonly isPublished = signal(false);
+  readonly saveError = signal('');
   readonly cancelRequested = output<void>();
   private nextQuestionId = 2;
+
   questions = [
     {
       id: 1,
@@ -18,9 +29,20 @@ export class SurveyForm {
       allowMultipleAnswers: false,
     },
   ];
+
   surveyName = '';
   surveyDeadline = '';
   surveyDescription = '';
+  surveyCategory = '';
+
+  readonly categories = [
+    'Gaming & entertainment',
+    'Health & wellness',
+    'Technology & innovation',
+    'Lifestyle & preferences',
+    'Team activities',
+    'Education & learning',
+  ];
 
   onCancelClick() {
     this.cancelRequested.emit();
@@ -61,24 +83,52 @@ export class SurveyForm {
       question.answers[answerIndex] = '';
       return;
     }
-
     question.answers.splice(answerIndex, 1);
   }
 
-  onPublish(form: NgForm, publishButton: HTMLButtonElement, publishedDialog: HTMLDialogElement) {
+  async onPublish(
+    form: NgForm,
+    publishButton: HTMLButtonElement,
+    publishedDialog: HTMLDialogElement,
+  ): Promise<void> {
+    if (this.isSaving() || this.isPublished()) return;
     if (form.invalid) {
       form.control.markAllAsTouched();
       return;
     }
-    if (isDevMode()) {
-      this.openPublishedDialog(publishButton, publishedDialog);
+    await this.saveSurvey(publishButton, publishedDialog);
+  }
+
+  private getSurveyData(): NewSurvey {
+    return {
+      title: this.surveyName,
+      category: this.surveyCategory,
+      description: this.surveyDescription.trim() || null,
+      endsAt: this.surveyDeadline
+        ? new Date(`${this.surveyDeadline}T23:59:59.999`).toISOString()
+        : null,
+      questions: this.questions,
+    };
+  }
+
+  private async saveSurvey(button: HTMLButtonElement, dialog: HTMLDialogElement): Promise<void> {
+    this.isSaving.set(true);
+    this.saveError.set('');
+    try {
+      await this.supabase.createSurvey(this.getSurveyData());
+      this.isPublished.set(true);
+      this.openPublishedDialog(button, dialog);
+    } catch (error: unknown) {
+      this.saveError.set(error instanceof Error ? error.message : 'Could not save the survey.');
+    } finally {
+      this.isSaving.set(false);
     }
   }
 
   private openPublishedDialog(
     publishButton: HTMLButtonElement,
     publishedDialog: HTMLDialogElement,
-  ) {
+  ): void {
     const buttonBounds = publishButton.getBoundingClientRect();
     publishedDialog.style.setProperty('--publish-right', `${buttonBounds.right}px`);
     publishedDialog.style.setProperty('--publish-bottom', `${buttonBounds.bottom}px`);

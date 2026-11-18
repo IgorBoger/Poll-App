@@ -1,0 +1,9 @@
+@use '../category-dropdown';
+
+.survey-form {
+  @include category-dropdown.category-dropdown(".survey-form");
+
+  &__category-filter:not(:hover, :open, :active) {
+    background-color: transparent;
+  }
+}
