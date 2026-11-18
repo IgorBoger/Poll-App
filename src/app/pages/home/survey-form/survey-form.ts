@@ -30,6 +30,7 @@ export class SurveyForm {
     },
   ];
 
+  createdSurveyId = '';
   surveyName = '';
   surveyDeadline = '';
   surveyDescription = '';
@@ -115,7 +116,7 @@ export class SurveyForm {
     this.isSaving.set(true);
     this.saveError.set('');
     try {
-      await this.supabase.createSurvey(this.getSurveyData());
+      this.createdSurveyId = await this.supabase.createSurvey(this.getSurveyData());
       this.isPublished.set(true);
       this.openPublishedDialog(button, dialog);
     } catch (error: unknown) {
