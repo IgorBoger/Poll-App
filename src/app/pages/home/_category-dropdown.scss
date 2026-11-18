@@ -1,0 +1,148 @@
+@mixin category-dropdown($block) {
+  &__category-control {
+    align-self: start;
+    max-width: 100%;
+  }
+
+  &__category-trigger {
+    position: relative;
+    display: grid;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  &__category-placeholder {
+    grid-area: 1 / 1;
+    z-index: 1;
+    padding-inline: 8px 32px;
+    display: flex;
+    align-items: center;
+    color: var(--color-text);
+    font-size: 18px;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  &__selected-category {
+    block-size: 1em;
+    margin: 0;
+    padding-inline: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-accent-strong);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  &__category-filter {
+    grid-area: 1 / 1;
+    appearance: none;
+    max-width: 100%;
+    padding: 6px 32px 6px 8px;
+    border: 0;
+    border-radius: 6px;
+    background-color: var(--color-background);
+    color: transparent;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 250ms ease;
+
+    &:is(:hover, :open, :active) {
+      background-color: var(--color-surface);
+    }
+
+    &:is(:hover, :open, :active) + #{$block}__category-arrow img:last-child {
+      opacity: 1;
+    }
+
+    &:open + #{$block}__category-arrow {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    option {
+      background-color: var(--color-highlight-card-background);
+      color: var(--color-highlight-card-text);
+    }
+  }
+
+  &__category-arrow {
+    position: absolute;
+    inset-inline-end: 8px;
+    top: 50%;
+    display: grid;
+    width: 16px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: transform 250ms ease;
+
+    img {
+      grid-area: 1 / 1;
+      width: 100%;
+    }
+
+    img:last-child {
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+  }
+
+  @supports (appearance: base-select) and selector(::picker(select)) {
+    &__category-filter {
+      appearance: base-select;
+
+      &::picker-icon {
+        display: none;
+      }
+
+      &::picker(select) {
+        appearance: base-select;
+        position-area: block-end span-inline-start;
+        margin-block-start: 4px;
+        padding: 4px;
+        border: 0;
+        border-radius: 6px;
+        background-color: var(--color-text);
+      }
+
+      option {
+        gap: 10px;
+        padding: 4px;
+        border-radius: 6px;
+        background-color: transparent;
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        transition: background-color 250ms ease;
+
+        &::checkmark {
+          display: none;
+        }
+
+        &:not([value='all']):is(:hover, :focus-visible) {
+          background-color: var(--color-highlight-card-hover);
+        }
+
+        &[hidden] {
+          display: none;
+        }
+      }
+
+      option + option {
+        margin-block-start: 4px;
+      }
+    }
+  }
+
+
+  &__category-filter:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 4px;
+  }
+}

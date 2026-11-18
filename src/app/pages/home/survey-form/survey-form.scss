@@ -1,3 +1,4 @@
+@use '../category-dropdown';
 .survey-form {
   --answer-letter-width: 24px;
   --answer-column-gap: 0px;
@@ -89,98 +90,10 @@
     margin-top: 6px;
   }
 
-  &__category {
-    position: relative;
-    align-self: start;
-    min-width: 0;
-  }
+  @include category-dropdown.category-dropdown(".survey-form");
 
-  &__category-select {
-    appearance: none;
-    width: 100%;
-    padding: 6px 32px 6px 8px;
-    border: 0;
-    border-radius: 6px;
-    color: var(--color-text);
+  &__category-filter:not(:hover, :open, :active) {
     background-color: transparent;
-    font: 700 18px / 1 var(--font-body);
-    cursor: pointer;
-
-    outline: 0;
-    box-shadow: none;
-
-    &:is(:hover, :open, :active) {
-      background-color: rgba(250, 245, 245, 0.2);
-
-      + .survey-form__category-arrow img:last-child {
-        opacity: 1;
-      }
-    }
-
-    &:open + .survey-form__category-arrow {
-      transform: translateY(-50%) rotate(180deg);
-    }
-
-    @supports (appearance: base-select) and selector(::picker(select)) {
-      appearance: base-select;
-
-      &::picker-icon {
-        display: none;
-      }
-
-      &::picker(select) {
-        appearance: base-select;
-        border: 0;
-        outline: 0;
-        box-shadow: none;
-        margin-block-start: 4px;
-        padding: 4px;
-        border-radius: 6px;
-        background-color: var(--color-text);
-      }
-    }
-
-    option {
-      color: var(--color-highlight-card-text);
-      background-color: var(--color-text);
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 6px;
-      font: 400 14px / 1 var(--font-body);
-      letter-spacing: 0.02em;
-      transition: background-color 250ms ease;
-
-      &::checkmark {
-        display: none;
-      }
-
-      &:is(:hover, :focus-visible) {
-        background-color: var(--color-highlight-card-hover);
-      }
-
-      &[hidden] {
-        display: none;
-      }
-    }
-  }
-
-  &__category-arrow {
-    position: absolute;
-    inset-inline-end: 8px;
-    top: 50%;
-    display: grid;
-    width: 16px;
-    pointer-events: none;
-    transform: translateY(-50%);
-
-    img {
-      grid-area: 1 / 1;
-      width: 100%;
-
-      &:last-child {
-        opacity: 0;
-      }
-    }
   }
 
   label {

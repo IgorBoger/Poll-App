@@ -21,7 +21,10 @@
     </header>
 
     <!-- <form> -->
-    <form #surveyForm="ngForm" (ngSubmit)="onPublish(surveyForm, publishButton, publishedDialog)">
+    <form
+      #surveyForm="ngForm"
+      (ngSubmit)="onPublish(surveyForm, publishButton, publishedDialog)"
+    >
       <div class="survey-form__fields">
         <div>
           <label for="survey-name">Survey name</label>
@@ -75,20 +78,37 @@
                 </button>
               </div>
             </div>
-            <div class="survey-form__category">
-              <select
-                class="survey-form__category-select"
-                id="survey-category"
-                name="category"
-                aria-label="Choose category"
+            <div class="survey-form__category-control">
+              <div class="survey-form__category-trigger">
+                <select
+                  class="survey-form__category-filter"
+                  id="survey-category"
+                  #surveyCategoryControl="ngModel"
+                  name="category"
+                  [(ngModel)]="surveyCategory"
+                  aria-label="Choose category"
+                  required
+                >
+                  <option value="" hidden>Choose category</option>
+                  @for (item of categories; track $index) {
+                    <option value="{{ item }}">{{ item }}</option>
+                  }
+                </select>
+
+                <span class="survey-form__category-arrow" aria-hidden="true">
+                  <img src="images/survey-list/category-arrow-down.png" alt="" />
+                  <img src="images/survey-list/category-arrow-down-accent.png" alt="" />
+                </span>
+                <span class="survey-form__category-placeholder" aria-hidden="true">Choose category</span>
+              </div>
+              <p class="survey-form__selected-category">{{ surveyCategory }}</p>
+              <span
+                class="survey-form__error"
+                [class.survey-form__error--visible]="
+                  surveyCategoryControl.hasError('required') && (surveyCategoryControl.touched || surveyForm.submitted)
+                "
+                >Choose a category.</span
               >
-                <option value="" hidden>Choose category</option>
-                <option value="all">All surveys</option>
-              </select>
-              <span class="survey-form__category-arrow" aria-hidden="true">
-                <img src="images/survey-form/category-arrow-down.png" alt="" />
-                <img src="images/survey-form/category-arrow-down-accent.png" alt="" />
-              </span>
             </div>
           </div>
         </div>
@@ -243,7 +263,6 @@
           #publishButton
           class="survey-form__publish"
           type="submit"
-          [disabled]="surveyForm.invalid"
         >
           Publish
           <img src="images/survey-form/check.png" width="18" height="16" alt="" />

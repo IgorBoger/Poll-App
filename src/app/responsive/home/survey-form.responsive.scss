@@ -63,13 +63,9 @@
       gap: 32px;
     }
 
-    &__category {
+    &__category-control {
       grid-row: 1;
       justify-self: start;
-    }
-
-    &__category-select {
-      padding-inline-start: 0;
     }
 
     &__question {
