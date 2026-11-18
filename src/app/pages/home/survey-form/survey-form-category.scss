@@ -3,6 +3,37 @@
 .survey-form {
   @include category-dropdown.category-dropdown(".survey-form");
 
+  &__category-control {
+    min-inline-size: 0;
+  }
+
+  &__category-trigger {
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  &__category-placeholder {
+    min-inline-size: 0;
+    white-space: nowrap;
+  }
+
+  &__selected-category {
+    padding-inline-end: 0;
+    text-align: end;
+  }
+
+  &__category-control > .survey-form__error {
+    text-align: end;
+  }
+
+  &__category-filter {
+    min-inline-size: 0;
+    block-size: 34px;
+    min-block-size: 0;
+    line-height: 22px;
+    white-space: nowrap;
+  }
+
   &__category-filter:not(:hover, :open, :active) {
     background-color: transparent;
   }

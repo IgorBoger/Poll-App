@@ -101,7 +101,7 @@
                 </span>
                 <span class="survey-form__category-placeholder" aria-hidden="true">Choose category</span>
               </div>
-              <p class="survey-form__selected-category">{{ surveyCategory }}</p>
+              <p class="survey-form__selected-category" [title]="surveyCategory">{{ surveyCategory }}</p>
               <span
                 class="survey-form__error"
                 [class.survey-form__error--visible]="

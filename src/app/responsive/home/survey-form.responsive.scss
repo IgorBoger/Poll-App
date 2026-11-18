@@ -1,3 +1,22 @@
+@media (min-width: 901px) and (max-width: 1100px) {
+  .survey-form {
+    &__panel {
+      padding-inline: 24px;
+    }
+
+    &__fields {
+      padding-inline: 24px;
+      column-gap: 24px;
+    }
+
+    &__category-placeholder,
+    &__category-filter,
+    label[for='survey-deadline'] {
+      font-size: 16px;
+    }
+  }
+}
+
 @media (max-width: 900px) {
   .survey-form {
     &.survey-form__overlay {
@@ -66,6 +85,15 @@
     &__category-control {
       grid-row: 1;
       justify-self: start;
+    }
+
+    &__selected-category {
+      padding-inline-end: 8px;
+      text-align: start;
+    }
+
+    &__category-control > .survey-form__error {
+      text-align: start;
     }
 
     &__question {
