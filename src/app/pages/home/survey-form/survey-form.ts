@@ -19,6 +19,7 @@ export class SurveyForm {
   readonly isPublished = signal(false);
   readonly saveError = signal('');
   readonly cancelRequested = output<void>();
+  readonly publishedConfirmed = output<string>();
   private nextQuestionId = 2;
 
   questions = [
@@ -134,5 +135,11 @@ export class SurveyForm {
     publishedDialog.style.setProperty('--publish-right', `${buttonBounds.right}px`);
     publishedDialog.style.setProperty('--publish-bottom', `${buttonBounds.bottom}px`);
     publishedDialog.showModal();
+  }
+
+  onPublishedDialogClose(): void {
+    if (this.createdSurveyId) {
+      this.publishedConfirmed.emit(this.createdSurveyId);
+    }
   }
 }

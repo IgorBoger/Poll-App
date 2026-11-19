@@ -21,10 +21,7 @@
     </header>
 
     <!-- <form> -->
-    <form
-      #surveyForm="ngForm"
-      (ngSubmit)="onPublish(surveyForm, publishButton, publishedDialog)"
-    >
+    <form #surveyForm="ngForm" (ngSubmit)="onPublish(surveyForm, publishButton, publishedDialog)">
       <div class="survey-form__fields">
         <div>
           <label for="survey-name">Survey name</label>
@@ -99,13 +96,18 @@
                   <img src="images/survey-list/category-arrow-down.png" alt="" />
                   <img src="images/survey-list/category-arrow-down-accent.png" alt="" />
                 </span>
-                <span class="survey-form__category-placeholder" aria-hidden="true">Choose category</span>
+                <span class="survey-form__category-placeholder" aria-hidden="true"
+                  >Choose category</span
+                >
               </div>
-              <p class="survey-form__selected-category" [title]="surveyCategory">{{ surveyCategory }}</p>
+              <p class="survey-form__selected-category" [title]="surveyCategory">
+                {{ surveyCategory }}
+              </p>
               <span
                 class="survey-form__error"
                 [class.survey-form__error--visible]="
-                  surveyCategoryControl.hasError('required') && (surveyCategoryControl.touched || surveyForm.submitted)
+                  surveyCategoryControl.hasError('required') &&
+                  (surveyCategoryControl.touched || surveyForm.submitted)
                 "
                 >Choose a category.</span
               >
@@ -275,6 +277,7 @@
     </form>
     <dialog
       #publishedDialog
+      (close)="onPublishedDialogClose()"
       class="survey-form__published"
       aria-labelledby="survey-published-message"
     >

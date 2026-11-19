@@ -1,10 +1,20 @@
-<main-header></main-header>
-<main>
-  <main-hero (newSurveyRequested)="isSurveyFormOpen.set(true)"></main-hero>
+@if (selectedSurveyId()) {
+  <main-survey-view (newSurveyRequested)="isSurveyFormOpen.set(true)">
+    <main-header></main-header>
+  </main-survey-view>
+} @else {
+  <main-header></main-header>
 
-  @if (isSurveyFormOpen()) {
-    <main-survey-form (cancelRequested)="onCancel()"></main-survey-form>
-  }
-  <main-survey-overview></main-survey-overview>
-  <main-survey-list></main-survey-list>
-</main>
+  <main>
+    <main-hero (newSurveyRequested)="isSurveyFormOpen.set(true)"></main-hero>
+    <main-survey-overview></main-survey-overview>
+    <main-survey-list></main-survey-list>
+  </main>
+}
+
+@if (isSurveyFormOpen()) {
+  <main-survey-form
+    (cancelRequested)="onCancel()"
+    (publishedConfirmed)="onSurveyPublished($event)"
+  ></main-survey-form>
+}

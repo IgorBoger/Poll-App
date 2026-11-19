@@ -1,0 +1,14 @@
+<div class="survey-view">
+  <div class="survey-view__content">
+    <div class="survey-view__toolbar">
+      <div class="survey-view__brand">
+        <ng-content select="main-header"></ng-content>
+      </div>
+      <button (click)="newSurveyRequested.emit()" class="survey-view__create" type="button">
+        Create survey
+        <img src="images/hero/add_circle.png" alt="" width="20" height="20" />
+      </button>
+    </div>
+    <div class="survey-view__body"></div>
+  </div>
+</div>

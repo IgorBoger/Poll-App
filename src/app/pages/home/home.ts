@@ -4,18 +4,25 @@ import { Hero } from './hero/hero';
 import { SurveyOverview } from './survey-overview/survey-overview';
 import { SurveyList } from './survey-list/survey-list';
 import { SurveyForm } from './survey-form/survey-form';
+import { SurveyView } from './survey-view/survey-view';
 
 @Component({
-  imports: [Header, Hero, SurveyOverview, SurveyList, SurveyForm],
+  imports: [Header, Hero, SurveyOverview, SurveyList, SurveyForm, SurveyView],
   selector: 'main-home',
   styleUrl: './home.scss',
   templateUrl: './home.html',
 })
 export class Home {
   readonly isSurveyFormOpen = signal(false);
+  readonly selectedSurveyId = signal('');
+
+  onSurveyPublished(surveyId: string): void {
+    this.selectedSurveyId.set(surveyId);
+    this.isSurveyFormOpen.set(false);
+  }
 
   onCancel() {
-    console.log('Cancel ist in Home angekommen');
+    this.selectedSurveyId.set('');
     this.isSurveyFormOpen.set(false);
   }
 }

@@ -1,0 +1,92 @@
+:host {
+  --header-logo-text-color: var(--color-background);
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: block;
+  overflow-y: auto;
+  background-color: #fff;
+  color: var(--color-text-dark);
+}
+
+.survey-view {
+  min-height: 100%;
+  padding: 40px clamp(16px, 4vw, 64px);
+
+  &__content {
+    max-width: 1218px;
+    margin-inline: auto;
+  }
+
+  &__toolbar {
+    display: flex;
+    // align-items: center;
+    justify-content: space-between;
+    // gap: 16px;
+    max-height: 48px;
+  }
+
+  &__brand {
+    flex-shrink: 0;
+  }
+
+  &__create {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: background-color 180ms ease;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 10px;
+    background-color: var(--color-accent);
+    color: var(--color-text-dark);
+    font: 700 18px / 1 var(--font-button);
+
+    img {
+      width: 0;
+      margin-inline-start: 0;
+      opacity: 0;
+      object-fit: contain;
+      transition:
+        width 180ms ease,
+        margin-inline-start 180ms ease,
+        opacity 180ms ease;
+    }
+
+    &:enabled:is(:hover, :focus-visible) {
+      background-color: var(--color-accent-strong);
+
+      img {
+        width: 20px;
+        margin-inline-start: 10px;
+        opacity: 1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &,
+      img {
+        transition: none;
+      }
+    }
+
+    &:enabled {
+      cursor: pointer;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-background);
+      outline-offset: 4px;
+    }
+  }
+
+  &__body {
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .survey-view {
+    padding: 32px 16px;
+  }
+}
