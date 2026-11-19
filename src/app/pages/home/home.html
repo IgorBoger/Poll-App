@@ -1,5 +1,28 @@
+<!-- <main-survey-view [surveyId]="selectedSurveyId()" (newSurveyRequested)="isSurveyFormOpen.set(true)">
+  <main-header></main-header>
+</main-survey-view>
+
+<main>
+  <main-hero (newSurveyRequested)="isSurveyFormOpen.set(true)"></main-hero>
+
+  @if (isSurveyFormOpen()) {
+    <main-survey-form (cancelRequested)="onCancel()"></main-survey-form>
+  }
+  <main-survey-overview></main-survey-overview>
+  <main-survey-list></main-survey-list>
+</main> -->
+
+
+
+
+
+
+
 @if (selectedSurveyId()) {
-  <main-survey-view (newSurveyRequested)="isSurveyFormOpen.set(true)">
+  <main-survey-view
+    [surveyId]="selectedSurveyId()"
+    (newSurveyRequested)="isSurveyFormOpen.set(true)"
+  >
     <main-header></main-header>
   </main-survey-view>
 } @else {

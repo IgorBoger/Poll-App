@@ -9,6 +9,34 @@
         <img src="images/hero/add_circle.png" alt="" width="20" height="20" />
       </button>
     </div>
-    <div class="survey-view__body"></div>
+    <div class="survey-view__body">
+      <article class="survey-view__survey">
+        <header class="survey-view__summary">
+          <span class="survey-view__status">Published</span>
+          <div class="survey-view__metadata">
+            <p class="survey-view__deadline">
+              @if (survey()?.ends_at; as deadline) {
+                Ends on
+                <time [attr.datetime]="deadline">
+                  {{ deadline | date: 'dd.MM.yyyy' }}
+                </time>
+              } @else {
+                No deadline
+              }
+            </p>
+            <p class="survey-view__category">
+              Category:
+              <span>{{ this.survey()?.category }}</span>
+            </p>
+          </div>
+          <h1 class="survey-view__title">
+            {{ this.survey()?.title }}
+          </h1>
+          <p class="survey-view__description">
+            {{ this.survey()?.description }}
+          </p>
+        </header>
+      </article>
+    </div>
   </div>
 </div>

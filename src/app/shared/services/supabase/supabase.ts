@@ -4,6 +4,7 @@ import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import type { SurveyListItem } from './survey-list-item';
 import type { SurveyHighlight } from './survey-highlight';
 import type { NewSurvey } from './new-survey';
+import type { SurveyDetails } from './survey-details';
 
 const ENDING_SOON_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const HIGHLIGHT_LIMIT = 3;
@@ -48,5 +49,14 @@ export class Supabase {
       .order('created_at', { ascending: false })
       .order('id')
       .overrideTypes<SurveyListItem[], { merge: false }>();
+  }
+
+  async getSurveyDetails(surveyId: string): Promise<PostgrestSingleResponse<SurveyDetails>> {
+    return this.supabase
+      .from('surveys')
+      .select('id, title, category, description, ends_at')
+      .eq('id', surveyId)
+      .single()
+      .overrideTypes<SurveyDetails, { merge: false }>();
   }
 }
