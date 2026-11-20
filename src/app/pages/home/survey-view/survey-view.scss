@@ -140,4 +140,103 @@
     white-space: pre-line;
     overflow-wrap: anywhere;
   }
+
+  &__questions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+    color: var(--color-background);
+  }
+
+  &__question {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+  }
+
+  &__question-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__question-title {
+    margin: 0;
+    font: 700 18px / 1 var(--font-body);
+    overflow-wrap: anywhere;
+  }
+
+  &__question-hint {
+    margin: 0;
+    font: 400 14px / 1 var(--font-body);
+  }
+
+  &__answers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-inline-start: 8px;
+  }
+
+  &__answer {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 4px;
+    border-radius: 3px;
+    background-color: transparent;
+    cursor: pointer;
+
+    &:hover:not(:has(.survey-view__answer-input:checked)) {
+      background-color: rgba(255, 207, 161, 0.4);
+    }
+  }
+
+  &__answer-input {
+    appearance: none;
+    display: grid;
+    place-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    background: url('../../../../../public/images/survey-view/checkbox-outline.png') center / contain no-repeat;
+    cursor: pointer;
+
+    &:checked {
+      border-radius: 3px;
+      background-color: var(--color-accent-strong);
+      background-image: none;
+    }
+
+    &:checked::before {
+      content: '';
+      width: 5px;
+      height: 9px;
+      border: solid var(--color-background);
+      border-width: 0 2px 2px 0;
+      transform: translateY(-1px) rotate(45deg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-background);
+      outline-offset: 3px;
+    }
+  }
+
+  &__answer-content {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    min-width: 0;
+    font: 400 16px / 1 var(--font-body);
+    overflow-wrap: anywhere;
+  }
+
+  &__answer-letter {
+    flex-shrink: 0;
+    font-weight: 700;
+  }
 }

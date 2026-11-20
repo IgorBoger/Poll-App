@@ -3,6 +3,7 @@ import type { OnChanges } from '@angular/core';
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { SurveyDetails } from '../../../shared/services/supabase/survey';
 import { DatePipe } from '@angular/common';
+import type { SurveyQuestion } from '../../../shared/services/supabase/survey-question';
 
 @Component({
   imports: [DatePipe],
@@ -15,9 +16,11 @@ export class SurveyView implements OnChanges {
   readonly supabase = inject(Supabase);
   readonly newSurveyRequested = output<void>();
   readonly surveyId = input.required<string>();
+  readonly questions = signal<SurveyQuestion[]>([]);
   ngOnChanges(): void {
     if (this.surveyId()) {
       void this.loadSurveyDetails();
+      void this.loadSurveyQuestions();
     }
   }
 
@@ -28,5 +31,18 @@ export class SurveyView implements OnChanges {
       return;
     }
     this.survey.set(data);
+  }
+
+  private async loadSurveyQuestions(): Promise<void> {
+    const { data, error } = await this.supabase.getSurveyQuestions(this.surveyId());
+    if (error) {
+      console.error('Fragen konnten nicht geladen werden:', error.message);
+      return;
+    }
+    this.questions.set(data ?? []);
+  }
+
+  answerLetter(index: number): string {
+    return String.fromCharCode(65 + index);
   }
 }

@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import type { Survey, SurveyDetails } from './survey';
 import type { NewSurvey } from './new-survey';
+import type { SurveyQuestion } from './survey-question';
 
 const ENDING_SOON_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const HIGHLIGHT_LIMIT = 3;
@@ -56,5 +57,23 @@ export class Supabase {
       .eq('id', surveyId)
       .single()
       .overrideTypes<SurveyDetails, { merge: false }>();
+  }
+
+  /** Lädt die Fragen einer Survey mit ihren sortierten Antwortoptionen. */
+  async getSurveyQuestions(surveyId: string): Promise<PostgrestSingleResponse<SurveyQuestion[]>> {
+    return this.supabase
+      .from('survey_questions')
+      .select(
+        `
+      id, survey_id, text, position, allow_multiple_answers,
+      answers:survey_answer_options(id, question_id, text, position)
+    `,
+      )
+      .eq('survey_id', surveyId)
+      .order('position', { nullsFirst: false })
+      .order('id')
+      .order('position', { referencedTable: 'answers', nullsFirst: false })
+      .order('id', { referencedTable: 'answers' })
+      .overrideTypes<SurveyQuestion[], { merge: false }>();
   }
 }
