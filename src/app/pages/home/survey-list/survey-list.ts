@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { Supabase } from '../../../shared/services/supabase/supabase';
-import type { SurveyListItem } from '../../../shared/services/supabase/survey-list-item';
+import type { Survey } from '../../../shared/services/supabase/survey';
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -12,7 +12,7 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000;
 })
 export class SurveyList implements OnInit {
   private readonly supabase = inject(Supabase);
-  protected readonly surveys = signal<SurveyListItem[]>([]);
+  protected readonly surveys = signal<Survey[]>([]);
   protected readonly status = signal<'loading' | 'ready' | 'error'>('loading');
   protected readonly selectedStatus = signal<'active' | 'past'>('active');
   protected readonly selectedCategoryLabel = signal('');

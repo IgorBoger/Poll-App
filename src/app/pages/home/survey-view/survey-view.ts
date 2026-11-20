@@ -1,7 +1,7 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 import type { OnChanges } from '@angular/core';
 import { Supabase } from '../../../shared/services/supabase/supabase';
-import type { SurveyDetails } from '../../../shared/services/supabase/survey-details';
+import type { SurveyDetails } from '../../../shared/services/supabase/survey';
 import { DatePipe } from '@angular/common';
 
 @Component({

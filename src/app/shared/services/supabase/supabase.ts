@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
-import type { SurveyListItem } from './survey-list-item';
-import type { SurveyHighlight } from './survey-highlight';
+import type { Survey, SurveyDetails } from './survey';
 import type { NewSurvey } from './new-survey';
-import type { SurveyDetails } from './survey-details';
 
 const ENDING_SOON_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const HIGHLIGHT_LIMIT = 3;
@@ -29,7 +27,7 @@ export class Supabase {
     return data;
   }
 
-  async getSurveyHighlights(from: number): Promise<PostgrestSingleResponse<SurveyHighlight[]>> {
+  async getSurveyHighlights(from: number): Promise<PostgrestSingleResponse<Survey[]>> {
     const deadlineLimit: number = from + ENDING_SOON_WINDOW_MS;
     return this.supabase
       .from('surveys')
@@ -39,16 +37,16 @@ export class Supabase {
       .order('ends_at')
       .order('id')
       .limit(HIGHLIGHT_LIMIT)
-      .overrideTypes<SurveyHighlight[], { merge: false }>();
+      .overrideTypes<Survey[], { merge: false }>();
   }
 
-  async getSurveys(): Promise<PostgrestSingleResponse<SurveyListItem[]>> {
+  async getSurveys(): Promise<PostgrestSingleResponse<Survey[]>> {
     return this.supabase
       .from('surveys')
       .select('id, title, category, ends_at')
       .order('created_at', { ascending: false })
       .order('id')
-      .overrideTypes<SurveyListItem[], { merge: false }>();
+      .overrideTypes<Survey[], { merge: false }>();
   }
 
   async getSurveyDetails(surveyId: string): Promise<PostgrestSingleResponse<SurveyDetails>> {
