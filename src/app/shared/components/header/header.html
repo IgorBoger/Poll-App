@@ -1,4 +1,4 @@
-<header class="site-header">
+<header class="site-header" [class.site-header--dark]="darkLogo()">
   <a
     (click)="homeRequested.emit()"
     class="site-header__link"
@@ -7,7 +7,7 @@
   >
     <img
       class="site-header__link__logo"
-      src="images/poll-app-logo.svg.png"
+      [src]="darkLogo() ? 'images/survey-form/poll-app-logo-dark.png' : 'images/poll-app-logo.svg.png'"
       alt=""
       width="64"
       height="32"

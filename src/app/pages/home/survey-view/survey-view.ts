@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   imports: [DatePipe, FormsModule],
   selector: 'main-survey-view',
-  styleUrl: './survey-view.scss',
+  styleUrls: ['./survey-view.scss', '../../../responsive/home/survey-view.responsive.scss'],
   templateUrl: './survey-view.html',
 })
 export class SurveyView implements OnChanges {
@@ -17,12 +17,14 @@ export class SurveyView implements OnChanges {
   readonly supabase = inject(Supabase);
   readonly newSurveyRequested = output<void>();
   readonly surveyCompleted = output<void>();
+  readonly closeRequested = output<void>();
   readonly surveyId = input.required<string>();
   readonly questions = signal<SurveyQuestion[]>([]);
   readonly selectedAnswers = signal<Record<string, string[]>>({});
   readonly validationError = signal('');
   readonly isSubmitting = signal(false);
   readonly hasSubmitted = signal(false);
+  readonly resultsExpanded = signal(true);
 
   ngOnChanges(): void {
     if (this.surveyId()) {

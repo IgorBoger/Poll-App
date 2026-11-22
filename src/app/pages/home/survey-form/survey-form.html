@@ -1,7 +1,6 @@
 <div class="survey-form survey-form__overlay">
   <div class="survey-form__brand">
-    <img src="images/survey-form/poll-app-logo-dark.png" width="69" height="50" alt="" />
-    <span>Poll<br />App</span>
+    <main-header [darkLogo]="true" (homeRequested)="onCancelClick()"></main-header>
   </div>
   <section class="survey-form__panel" aria-labelledby="survey-form-heading">
     <header class="survey-form__header">

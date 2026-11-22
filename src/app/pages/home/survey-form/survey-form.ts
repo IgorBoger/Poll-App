@@ -2,9 +2,10 @@ import { Component, inject, output, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { NewSurvey } from '../../../shared/services/supabase/new-survey';
+import { Header } from '../../../shared/components/header/header';
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, Header],
   selector: 'main-survey-form',
   styleUrls: [
     './survey-form.scss',

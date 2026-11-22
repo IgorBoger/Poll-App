@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -8,5 +8,6 @@ import { RouterLink } from '@angular/router';
   templateUrl: './header.html',
 })
 export class Header {
+  readonly darkLogo = input(false);
   readonly homeRequested = output<void>();
 }

@@ -2,6 +2,10 @@
   background-color: transparent;
   width: 100%;
 
+  &--dark {
+    --header-logo-text-color: var(--color-background);
+  }
+
   &__link {
     display: inline-flex;
     align-items: flex-start;
