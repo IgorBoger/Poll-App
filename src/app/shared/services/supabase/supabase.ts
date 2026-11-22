@@ -59,7 +59,6 @@ export class Supabase {
       .overrideTypes<SurveyDetails, { merge: false }>();
   }
 
-  /** Lädt die Fragen einer Survey mit ihren sortierten Antwortoptionen. */
   async getSurveyQuestions(surveyId: string): Promise<PostgrestSingleResponse<SurveyQuestion[]>> {
     return this.supabase
       .from('survey_questions')
@@ -75,5 +74,15 @@ export class Supabase {
       .order('position', { referencedTable: 'answers', nullsFirst: false })
       .order('id', { referencedTable: 'answers' })
       .overrideTypes<SurveyQuestion[], { merge: false }>();
+  }
+
+  async submitSurveyVotes(surveyId: string, answerIds: string[]): Promise<void> {
+    const { error } = await this.supabase.rpc('submit_survey_votes', {
+      p_survey_id: surveyId,
+      p_answer_ids: answerIds,
+    });
+    if (error) {
+      throw new Error(error.message);
+    }
   }
 }

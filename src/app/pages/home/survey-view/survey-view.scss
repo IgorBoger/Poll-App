@@ -202,7 +202,8 @@
     width: 16px;
     height: 16px;
     margin: 0;
-    background: url('../../../../../public/images/survey-view/checkbox-outline.png') center / contain no-repeat;
+    background: url('../../../../../public/images/survey-view/checkbox-outline.png') center /
+      contain no-repeat;
     cursor: pointer;
 
     &:checked {
@@ -238,5 +239,36 @@
   &__answer-letter {
     flex-shrink: 0;
     font-weight: 700;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+  }
+
+  &__complete {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 10px;
+    background-color: rgba(255, 183, 112, 0.3);
+    color: var(--color-background);
+    font: 700 16px / 1 var(--font-button);
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(255, 183, 112, 0.6);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-background);
+      outline-offset: 4px;
+    }
+  }
+
+  &__validation-error {
+    margin: 24px 0 0;
+    color: var(--color-error);
+    font: 400 14px / 1.4 var(--font-body);
   }
 }
