@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, output } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { Survey } from '../../../shared/services/supabase/survey';
@@ -31,6 +31,7 @@ export class SurveyList implements OnInit {
       return hasEnded === showPast && matchesCategory;
     });
   });
+  readonly surveyRequested = output<string>();
 
   ngOnInit(): void {
     void this.loadSurveys();

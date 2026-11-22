@@ -1,5 +1,10 @@
 <header class="site-header">
-  <a class="site-header__link" routerLink="/" aria-label="PollApp home">
+  <a
+    (click)="homeRequested.emit()"
+    class="site-header__link"
+    routerLink="/"
+    aria-label="PollApp home"
+  >
     <img
       class="site-header__link__logo"
       src="images/poll-app-logo.svg.png"

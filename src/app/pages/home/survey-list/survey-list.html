@@ -60,7 +60,14 @@
     <div class="survey-list__scroll-frame">
       <ul class="survey-list__cards">
         @for (survey of visibleSurveys(); track survey.id) {
-          <li class="survey-list__card">
+          <li
+            class="survey-list__card"
+            role="button"
+            tabindex="0"
+            (click)="surveyRequested.emit(survey.id)"
+            (keydown.enter)="surveyRequested.emit(survey.id)"
+            (keydown.space)="$event.preventDefault(); surveyRequested.emit(survey.id)"
+          >
             <p class="survey-list__category">{{ survey.category }}</p>
             <h3 class="survey-list__title">{{ survey.title }}</h3>
             <p class="survey-list__deadline">

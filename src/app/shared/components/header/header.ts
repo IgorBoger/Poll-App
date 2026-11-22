@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -7,4 +7,6 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.scss',
   templateUrl: './header.html',
 })
-export class Header {}
+export class Header {
+  readonly homeRequested = output<void>();
+}

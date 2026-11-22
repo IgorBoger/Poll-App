@@ -18,18 +18,19 @@
 
 @if (selectedSurveyId()) {
   <main-survey-view
+    (surveyCompleted)="onCancel()"
     [surveyId]="selectedSurveyId()"
     (newSurveyRequested)="isSurveyFormOpen.set(true)"
   >
-    <main-header></main-header>
+    <main-header (homeRequested)="onCancel()"></main-header>
   </main-survey-view>
 } @else {
   <main-header></main-header>
 
   <main>
     <main-hero (newSurveyRequested)="isSurveyFormOpen.set(true)"></main-hero>
-    <main-survey-overview></main-survey-overview>
-    <main-survey-list></main-survey-list>
+    <main-survey-overview (surveyRequested)="selectedSurveyId.set($event)"></main-survey-overview>
+    <main-survey-list (surveyRequested)="selectedSurveyId.set($event)"></main-survey-list>
   </main>
 }
 

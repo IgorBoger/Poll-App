@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, output } from '@angular/core';
 import type { OnInit } from '@angular/core';
 
 import { Supabase } from '../../../shared/services/supabase/supabase';
@@ -15,7 +15,7 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000;
 export class SurveyOverview implements OnInit {
   private readonly supabase = inject(Supabase);
   private readonly loadedAt: number = Date.now();
-
+  readonly surveyRequested = output<string>();
   protected readonly surveyHighlights = signal<Survey[]>([]);
   protected readonly status = signal<'loading' | 'ready' | 'error'>('loading');
 
