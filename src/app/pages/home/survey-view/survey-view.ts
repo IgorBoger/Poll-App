@@ -28,6 +28,7 @@ export class SurveyView implements OnChanges {
     if (this.surveyId()) {
       void this.loadSurveyDetails();
       void this.loadSurveyQuestions();
+      this.selectedAnswers.set(this.loadFromLocalStorageVotes());
     }
   }
 
@@ -69,6 +70,7 @@ export class SurveyView implements OnChanges {
     try {
       await this.supabase.submitSurveyVotes(this.surveyId(), answerIds);
       this.hasSubmitted.set(true);
+      this.saveVotesToLocalStorage();
       this.surveyCompleted.emit();
     } catch (error: unknown) {
       const text: string = error instanceof Error ? error.message : 'Could not save your answers.';
@@ -76,6 +78,17 @@ export class SurveyView implements OnChanges {
     } finally {
       this.isSubmitting.set(false);
     }
+  }
+
+  private saveVotesToLocalStorage(): void {
+    localStorage.setItem(`survey-vote-${this.surveyId()}`, JSON.stringify(this.selectedAnswers()));
+  }
+
+  private loadFromLocalStorageVotes(): Record<string, string[]> {
+    const storedVotes = localStorage.getItem(`survey-vote-${this.surveyId()}`);
+    const votes: Record<string, string[]> = storedVotes ? JSON.parse(storedVotes) : {};
+    this.hasSubmitted.set(Object.keys(votes).length > 0);
+    return votes;
   }
 
   onAnswerChange(question: SurveyQuestion, answerId: string, value: boolean | string): void {
