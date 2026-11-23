@@ -141,157 +141,54 @@
             [class.survey-view__results-arrow--down]="!resultsExpanded()"
           />
         </button>
-        <div id="survey-results-content" [class.survey-view__results-content--collapsed]="!resultsExpanded()">
+        <div
+          id="survey-results-content"
+          [class.survey-view__results-content--collapsed]="!resultsExpanded()"
+        >
           <h2 id="survey-results-title" class="survey-view__results-title">
             Survey results <span>LIVE</span>
           </h2>
-          <p class="survey-view__results-description">
-            Results will be shown here after participants complete the survey.
-          </p>
-          <p class="survey-view__results-empty">There are no answers yet.</p>
-       
-          <!-- <div class="survey-view__result-questions">
-            <section class="survey-view__result-question" aria-labelledby="result-preview-question-1">
-              <h3 id="result-preview-question-1" class="survey-view__result-question-title">
-                1. Which date would work best for you?
-              </h3>
-              <div class="survey-view__result-answers">
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">A</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 27%"></div>
+          @if (!hasVotes()) {
+            <p class="survey-view__results-description">
+              Results will be shown here after participants complete the survey.
+            </p>
+            <p class="survey-view__results-empty">There are no answers yet.</p>
+          } @else {
+            <div class="survey-view__result-questions">
+              @for (question of questions(); track question.id) {
+                <section
+                  class="survey-view__result-question"
+                  aria-labelledby="result-question-{{ question.id }}"
+                >
+                  <h3
+                    id="result-question-{{ question.id }}"
+                    class="survey-view__result-question-title"
+                  >
+                    {{ $index + 1 }}. {{ question.text }}
+                  </h3>
+
+                  <div class="survey-view__result-answers">
+                    @for (answer of question.answers; track answer.id) {
+                      <div class="survey-view__result-row">
+                        <span class="survey-view__result-letter">
+                          {{ answerLetter($index) }}
+                        </span>
+                        <div class="survey-view__result-track" aria-hidden="true">
+                          <div
+                            class="survey-view__result-fill"
+                            [style.width.%]="answerPercentage(question, answer.vote_count)"
+                          ></div>
+                        </div>
+                        <span class="survey-view__result-percentage">
+                          {{ answerPercentage(question, answer.vote_count) }}%
+                        </span>
+                      </div>
+                    }
                   </div>
-                  <span class="survey-view__result-percentage">27%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">B</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 44%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">44%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">C</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 3%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">3%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">D</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 26%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">26%</span>
-                </div>
-              </div>
-            </section>
-            <section class="survey-view__result-question" aria-labelledby="result-preview-question-2">
-              <h3 id="result-preview-question-2" class="survey-view__result-question-title">
-                2. Choose the activities you prefer
-              </h3>
-              <div class="survey-view__result-answers">
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">A</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 60%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">60%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">B</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 0%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">0%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">C</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 14%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">14%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">D</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 26%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">26%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">E</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 0%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">0%</span>
-                </div>
-              </div>
-            </section>
-            <section class="survey-view__result-question" aria-labelledby="result-preview-question-3">
-              <h3 id="result-preview-question-3" class="survey-view__result-question-title">
-                3. What’s most important to you in a team event?
-              </h3>
-              <div class="survey-view__result-answers">
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">A</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 44%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">44%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">B</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 3%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">3%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">C</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 26%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">26%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">D</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 27%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">27%</span>
-                </div>
-              </div>
-            </section>
-            <section class="survey-view__result-question" aria-labelledby="result-preview-question-4">
-              <h3 id="result-preview-question-4" class="survey-view__result-question-title">
-                4. How long would you prefer the event to last?
-              </h3>
-              <div class="survey-view__result-answers">
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">A</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 14%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">14%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">B</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 86%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">86%</span>
-                </div>
-                <div class="survey-view__result-row">
-                  <span class="survey-view__result-letter">C</span>
-                  <div class="survey-view__result-track" aria-hidden="true">
-                    <div class="survey-view__result-fill" style="width: 0%"></div>
-                  </div>
-                  <span class="survey-view__result-percentage">0%</span>
-                </div>
-              </div>
-            </section>
-          </div> -->
+                </section>
+              }
+            </div>
+          }
         </div>
       </aside>
     </div>

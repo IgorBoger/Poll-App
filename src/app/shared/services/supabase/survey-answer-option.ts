@@ -3,4 +3,5 @@ export interface SurveyAnswerOption {
   question_id: string;
   text: string;
   position: number | null;
+  vote_count: number;
 }

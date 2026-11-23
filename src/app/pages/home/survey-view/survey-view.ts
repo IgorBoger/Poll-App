@@ -52,6 +52,19 @@ export class SurveyView implements OnChanges {
     this.questions.set(data ?? []);
   }
 
+  totalVotes(question: SurveyQuestion): number {
+    return question.answers.reduce((sum, answer) => sum + answer.vote_count, 0);
+  }
+
+  answerPercentage(question: SurveyQuestion, voteCount: number): number {
+    const total = this.totalVotes(question);
+    return total > 0 ? Math.round((voteCount / total) * 100) : 0;
+  }
+
+  hasVotes(): boolean {
+    return this.questions().some((question) => this.totalVotes(question) > 0);
+  }
+
   answerLetter(index: number): string {
     return String.fromCharCode(65 + index);
   }

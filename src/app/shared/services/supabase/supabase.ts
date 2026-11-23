@@ -65,7 +65,7 @@ export class Supabase {
       .select(
         `
       id, survey_id, text, position, allow_multiple_answers,
-      answers:survey_answer_options(id, question_id, text, position)
+      answers:survey_answer_options(id, question_id, text, position, vote_count)
     `,
       )
       .eq('survey_id', surveyId)
