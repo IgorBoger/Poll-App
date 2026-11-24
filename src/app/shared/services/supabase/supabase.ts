@@ -1,18 +1,55 @@
 import { Injectable } from '@angular/core';
 import { createClient } from '@supabase/supabase-js';
-import type { PostgrestSingleResponse } from '@supabase/supabase-js';
+import type {
+  PostgrestSingleResponse,
+  RealtimeChannel,
+  RealtimePostgresChangesFilter,
+} from '@supabase/supabase-js';
+import { Observable } from 'rxjs';
 import type { Survey, SurveyDetails } from './survey';
 import type { NewSurvey } from './new-survey';
 import type { SurveyQuestion } from './survey-question';
+import type { SurveyAnswerOption } from './survey-answer-option';
 
 const ENDING_SOON_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const HIGHLIGHT_LIMIT = 3;
+const SURVEY_QUESTIONS_SELECT: string = `
+  id, survey_id, text, position, allow_multiple_answers,
+  answers:survey_answer_options(id, question_id, text, position, vote_count)
+`;
 
 @Injectable()
 export class Supabase {
   supabaseUrl = 'https://eowabjsykssvvxmczlwy.supabase.co';
   supabaseKey = 'sb_publishable_7w6aAfv7c6X_I0FHwOOnDQ_cMYIZVA4';
   private readonly supabase = createClient(this.supabaseUrl, this.supabaseKey);
+
+  watchSurveyVotes(questionIds: string[]): Observable<void> {
+    return new Observable<void>((subscriber) => {
+      if (questionIds.length === 0) return;
+      const channel: RealtimeChannel = this.createVoteChannel(questionIds, () => subscriber.next());
+      return () => void this.supabase.removeChannel(channel);
+    });
+  }
+
+  private createVoteChannel(questionIds: string[], notify: () => void): RealtimeChannel {
+    const channel: RealtimeChannel = this.supabase.channel(`survey-votes-${crypto.randomUUID()}`);
+    const filter: RealtimePostgresChangesFilter<'UPDATE'> = this.getVoteChangeFilter(questionIds);
+    return channel
+      .on<SurveyAnswerOption>('postgres_changes', filter, notify)
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') notify();
+      });
+  }
+
+  private getVoteChangeFilter(questionIds: string[]): RealtimePostgresChangesFilter<'UPDATE'> {
+    return {
+      event: 'UPDATE',
+      schema: 'public',
+      table: 'survey_answer_options',
+      filter: `question_id=in.(${questionIds.join(',')})`,
+    };
+  }
 
   async createSurvey(survey: NewSurvey): Promise<string> {
     const { data, error } = await this.supabase.rpc('create_survey', {
@@ -62,12 +99,7 @@ export class Supabase {
   async getSurveyQuestions(surveyId: string): Promise<PostgrestSingleResponse<SurveyQuestion[]>> {
     return this.supabase
       .from('survey_questions')
-      .select(
-        `
-      id, survey_id, text, position, allow_multiple_answers,
-      answers:survey_answer_options(id, question_id, text, position, vote_count)
-    `,
-      )
+      .select(SURVEY_QUESTIONS_SELECT)
       .eq('survey_id', surveyId)
       .order('position', { nullsFirst: false })
       .order('id')

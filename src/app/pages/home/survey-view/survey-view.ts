@@ -1,5 +1,8 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
 import type { OnChanges } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
+import type { Subscription } from 'rxjs';
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { SurveyDetails } from '../../../shared/services/supabase/survey';
 import { DatePipe } from '@angular/common';
@@ -13,6 +16,8 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './survey-view.html',
 })
 export class SurveyView implements OnChanges {
+  private readonly destroyRef = inject(DestroyRef);
+  private voteSubscription: Subscription | null = null;
   readonly survey = signal<SurveyDetails | null>(null);
   readonly supabase = inject(Supabase);
   readonly newSurveyRequested = output<void>();
@@ -27,6 +32,7 @@ export class SurveyView implements OnChanges {
   readonly resultsExpanded = signal(true);
 
   ngOnChanges(): void {
+    this.voteSubscription?.unsubscribe();
     if (this.surveyId()) {
       void this.loadSurveyDetails();
       void this.loadSurveyQuestions();
@@ -44,12 +50,29 @@ export class SurveyView implements OnChanges {
   }
 
   private async loadSurveyQuestions(): Promise<void> {
-    const { data, error } = await this.supabase.getSurveyQuestions(this.surveyId());
+    const surveyId: string = this.surveyId();
+    const { data, error } = await this.supabase.getSurveyQuestions(surveyId);
+    if (this.destroyRef.destroyed || surveyId !== this.surveyId()) return;
     if (error) {
       console.error('Fragen konnten nicht geladen werden:', error.message);
       return;
     }
     this.questions.set(data ?? []);
+    this.watchSurveyVotes(surveyId);
+  }
+
+  /** Refreshes results on vote changes without changing the participant's selection. */
+  private watchSurveyVotes(surveyId: string): void {
+    const questionIds: string[] = this.questions().map((question) => question.id);
+    this.voteSubscription = this.supabase
+      .watchSurveyVotes(questionIds)
+      .pipe(
+        switchMap(() => this.supabase.getSurveyQuestions(surveyId)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(({ data, error }) => {
+        if (!error && surveyId === this.surveyId()) this.questions.set(data ?? []);
+      });
   }
 
   totalVotes(question: SurveyQuestion): number {
