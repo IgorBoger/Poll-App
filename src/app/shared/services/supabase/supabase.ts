@@ -4,25 +4,29 @@ import type {
   PostgrestSingleResponse,
   RealtimeChannel,
   RealtimePostgresChangesFilter,
+  SupabaseClient,
 } from '@supabase/supabase-js';
 import { Observable } from 'rxjs';
-import type { Survey, SurveyDetails } from './survey';
-import type { NewSurvey } from './new-survey';
-import type { SurveyQuestion } from './survey-question';
-import type { SurveyAnswerOption } from './survey-answer-option';
 
-const ENDING_SOON_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-const HIGHLIGHT_LIMIT = 3;
+import type { NewSurvey } from './new-survey';
+import type { Survey, SurveyDetails } from './survey';
+import type { SurveyAnswerOption } from './survey-answer-option';
+import type { SurveyQuestion } from './survey-question';
+
+const ENDING_SOON_WINDOW_MS: number = 7 * 24 * 60 * 60 * 1000;
+const HIGHLIGHT_LIMIT: number = 3;
 const SURVEY_QUESTIONS_SELECT: string = `
   id, survey_id, text, position, allow_multiple_answers,
   answers:survey_answer_options(id, question_id, text, position, vote_count)
 `;
 
+type SurveyCreateResponse = PostgrestSingleResponse<string>;
+
 @Injectable()
 export class Supabase {
-  supabaseUrl = 'https://eowabjsykssvvxmczlwy.supabase.co';
-  supabaseKey = 'sb_publishable_7w6aAfv7c6X_I0FHwOOnDQ_cMYIZVA4';
-  private readonly supabase = createClient(this.supabaseUrl, this.supabaseKey);
+  supabaseUrl: string = 'https://eowabjsykssvvxmczlwy.supabase.co';
+  supabaseKey: string = 'sb_publishable_7w6aAfv7c6X_I0FHwOOnDQ_cMYIZVA4';
+  private readonly supabase: SupabaseClient = createClient(this.supabaseUrl, this.supabaseKey);
 
   watchSurveyVotes(questionIds: string[]): Observable<void> {
     return new Observable<void>((subscriber) => {
@@ -52,7 +56,7 @@ export class Supabase {
   }
 
   async createSurvey(survey: NewSurvey): Promise<string> {
-    const { data, error } = await this.supabase.rpc('create_survey', {
+    const { data, error }: SurveyCreateResponse = await this.supabase.rpc('create_survey', {
       p_title: survey.title,
       p_category: survey.category,
       p_description: survey.description,
@@ -109,10 +113,13 @@ export class Supabase {
   }
 
   async submitSurveyVotes(surveyId: string, answerIds: string[]): Promise<void> {
-    const { error } = await this.supabase.rpc('submit_survey_votes', {
-      p_survey_id: surveyId,
-      p_answer_ids: answerIds,
-    });
+    const { error }: PostgrestSingleResponse<null> = await this.supabase.rpc(
+      'submit_survey_votes',
+      {
+        p_survey_id: surveyId,
+        p_answer_ids: answerIds,
+      },
+    );
     if (error) {
       throw new Error(error.message);
     }

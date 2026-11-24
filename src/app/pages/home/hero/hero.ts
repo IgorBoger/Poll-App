@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, output, OutputEmitterRef } from '@angular/core';
 
 @Component({
   imports: [],
@@ -7,5 +7,5 @@ import { Component, output } from '@angular/core';
   templateUrl: './hero.html',
 })
 export class Hero {
-  readonly newSurveyRequested = output<void>();
+  readonly newSurveyRequested: OutputEmitterRef<void> = output<void>();
 }

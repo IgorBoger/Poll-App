@@ -1,8 +1,14 @@
 import { Component, inject, output, signal } from '@angular/core';
+import type { OutputEmitterRef, WritableSignal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Supabase } from '../../../shared/services/supabase/supabase';
-import type { NewSurvey } from '../../../shared/services/supabase/new-survey';
+
 import { Header } from '../../../shared/components/header/header';
+import type { NewSurvey } from '../../../shared/services/supabase/new-survey';
+import { Supabase } from '../../../shared/services/supabase/supabase';
+
+const MIN_ANSWERS: number = 2;
+const MAX_ANSWERS: number = 6;
+const FIRST_ANSWER_CHAR_CODE: number = 65;
 
 @Component({
   imports: [FormsModule, Header],
@@ -15,15 +21,15 @@ import { Header } from '../../../shared/components/header/header';
   templateUrl: './survey-form.html',
 })
 export class SurveyForm {
-  private readonly supabase = inject(Supabase);
-  readonly isSaving = signal(false);
-  readonly isPublished = signal(false);
-  readonly saveError = signal('');
-  readonly cancelRequested = output<void>();
-  readonly publishedConfirmed = output<string>();
-  private nextQuestionId = 2;
+  private readonly supabase: Supabase = inject(Supabase);
+  readonly isSaving: WritableSignal<boolean> = signal(false);
+  readonly isPublished: WritableSignal<boolean> = signal(false);
+  readonly saveError: WritableSignal<string> = signal('');
+  readonly cancelRequested: OutputEmitterRef<void> = output<void>();
+  readonly publishedConfirmed: OutputEmitterRef<string> = output<string>();
+  private nextQuestionId: number = 2;
 
-  questions = [
+  questions: (NewSurvey['questions'][number] & { id: number })[] = [
     {
       id: 1,
       text: '',
@@ -32,13 +38,13 @@ export class SurveyForm {
     },
   ];
 
-  createdSurveyId = '';
-  surveyName = '';
-  surveyDeadline = '';
-  surveyDescription = '';
-  surveyCategory = '';
+  createdSurveyId: string = '';
+  surveyName: string = '';
+  surveyDeadline: string = '';
+  surveyDescription: string = '';
+  surveyCategory: string = '';
 
-  readonly categories = [
+  readonly categories: string[] = [
     'Gaming & entertainment',
     'Health & wellness',
     'Technology & innovation',
@@ -47,12 +53,12 @@ export class SurveyForm {
     'Education & learning',
   ];
 
-  onCancelClick() {
+  onCancelClick(): void {
     this.cancelRequested.emit();
   }
 
-  onNextQuestionClick() {
-    const nextId = this.nextQuestionId;
+  onNextQuestionClick(): void {
+    const nextId: number = this.nextQuestionId;
     this.nextQuestionId += 1;
     this.questions.push({
       id: nextId,
@@ -62,16 +68,16 @@ export class SurveyForm {
     });
   }
 
-  onAddAnswerClick(question: { answers: string[] }) {
-    if (question.answers.length >= 6) return;
+  onAddAnswerClick(question: { answers: string[] }): void {
+    if (question.answers.length >= MAX_ANSWERS) return;
     question.answers.push('');
   }
 
   answerLetter(index: number): string {
-    return String.fromCharCode(65 + index);
+    return String.fromCharCode(FIRST_ANSWER_CHAR_CODE + index);
   }
 
-  onDeleteQuestion(questionIndex: number) {
+  onDeleteQuestion(questionIndex: number): void {
     if (questionIndex === 0) {
       this.questions[0].text = '';
       this.questions[0].allowMultipleAnswers = false;
@@ -81,8 +87,8 @@ export class SurveyForm {
     this.questions.splice(questionIndex, 1);
   }
 
-  onDeleteAnswer(question: { answers: string[] }, answerIndex: number) {
-    if (question.answers.length <= 2) {
+  onDeleteAnswer(question: { answers: string[] }, answerIndex: number): void {
+    if (question.answers.length <= MIN_ANSWERS) {
       question.answers[answerIndex] = '';
       return;
     }
@@ -132,7 +138,7 @@ export class SurveyForm {
     publishButton: HTMLButtonElement,
     publishedDialog: HTMLDialogElement,
   ): void {
-    const buttonBounds = publishButton.getBoundingClientRect();
+    const buttonBounds: DOMRect = publishButton.getBoundingClientRect();
     publishedDialog.style.setProperty('--publish-right', `${buttonBounds.right}px`);
     publishedDialog.style.setProperty('--publish-bottom', `${buttonBounds.bottom}px`);
     publishedDialog.showModal();

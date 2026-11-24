@@ -1,9 +1,11 @@
-import { Component, computed, inject, signal, output } from '@angular/core';
-import type { OnInit } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
+import type { OnInit, OutputEmitterRef, Signal, WritableSignal } from '@angular/core';
+import type { PostgrestSingleResponse } from '@supabase/supabase-js';
+
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { Survey } from '../../../shared/services/supabase/survey';
 
-const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const DAY_IN_MS: number = 24 * 60 * 60 * 1000;
 
 @Component({
   selector: 'main-survey-list',
@@ -11,34 +13,38 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000;
   templateUrl: './survey-list.html',
 })
 export class SurveyList implements OnInit {
-  private readonly supabase = inject(Supabase);
-  protected readonly surveys = signal<Survey[]>([]);
-  protected readonly status = signal<'loading' | 'ready' | 'error'>('loading');
-  protected readonly selectedStatus = signal<'active' | 'past'>('active');
-  protected readonly selectedCategoryLabel = signal('');
-  protected readonly categories = computed(() => {
-    const categories = this.surveys().map((survey) => survey.category);
+  private readonly supabase: Supabase = inject(Supabase);
+  protected readonly surveys: WritableSignal<Survey[]> = signal<Survey[]>([]);
+  protected readonly status: WritableSignal<'loading' | 'ready' | 'error'> = signal<
+    'loading' | 'ready' | 'error'
+  >('loading');
+  protected readonly selectedStatus: WritableSignal<'active' | 'past'> = signal<'active' | 'past'>(
+    'active',
+  );
+  protected readonly selectedCategoryLabel: WritableSignal<string> = signal('');
+  protected readonly categories: Signal<string[]> = computed(() => {
+    const categories: string[] = this.surveys().map((survey) => survey.category);
     return [...new Set(categories)].sort((first, second) => first.localeCompare(second, 'en'));
   });
-  protected readonly visibleSurveys = computed(() => {
-    const showPast = this.selectedStatus() === 'past';
-    const category = this.selectedCategoryLabel();
-    const now = Date.now();
+  protected readonly visibleSurveys: Signal<Survey[]> = computed(() => {
+    const showPast: boolean = this.selectedStatus() === 'past';
+    const category: string = this.selectedCategoryLabel();
+    const now: number = Date.now();
 
     return this.surveys().filter((survey) => {
-      const hasEnded = survey.ends_at !== null && Date.parse(survey.ends_at) <= now;
-      const matchesCategory = category === '' || survey.category === category;
+      const hasEnded: boolean = survey.ends_at !== null && Date.parse(survey.ends_at) <= now;
+      const matchesCategory: boolean = category === '' || survey.category === category;
       return hasEnded === showPast && matchesCategory;
     });
   });
-  readonly surveyRequested = output<string>();
+  readonly surveyRequested: OutputEmitterRef<string> = output<string>();
 
   ngOnInit(): void {
     void this.loadSurveys();
   }
 
   private async loadSurveys(): Promise<void> {
-    const { data, error } = await this.supabase.getSurveys();
+    const { data, error }: PostgrestSingleResponse<Survey[]> = await this.supabase.getSurveys();
     this.surveys.set(data ?? []);
     this.status.set(error ? 'error' : 'ready');
   }

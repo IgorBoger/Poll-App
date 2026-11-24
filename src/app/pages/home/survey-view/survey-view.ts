@@ -1,15 +1,25 @@
-import { Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
-import type { OnChanges } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
+import type {
+  InputSignal,
+  OnChanges,
+  OutputEmitterRef,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { switchMap, timer } from 'rxjs';
 import type { Subscription } from 'rxjs';
+
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { SurveyDetails } from '../../../shared/services/supabase/survey';
-import { DatePipe } from '@angular/common';
 import type { SurveyQuestion } from '../../../shared/services/supabase/survey-question';
-import { FormsModule } from '@angular/forms';
 
-const DEADLINE_CHECK_INTERVAL_MS = 1000;
+const DEADLINE_CHECK_INTERVAL_MS: number = 1000;
+const FIRST_ANSWER_CHAR_CODE: number = 65;
+const PERCENTAGE_SCALE: number = 100;
 
 @Component({
   imports: [DatePipe, FormsModule],
@@ -18,23 +28,25 @@ const DEADLINE_CHECK_INTERVAL_MS = 1000;
   templateUrl: './survey-view.html',
 })
 export class SurveyView implements OnChanges {
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private voteSubscription: Subscription | null = null;
-  private readonly currentTime = signal(Date.now());
-  readonly survey = signal<SurveyDetails | null>(null);
-  readonly supabase = inject(Supabase);
-  readonly newSurveyRequested = output<void>();
-  readonly surveyCompleted = output<void>();
-  readonly closeRequested = output<void>();
-  readonly surveyId = input.required<string>();
-  readonly questions = signal<SurveyQuestion[]>([]);
-  readonly selectedAnswers = signal<Record<string, string[]>>({});
-  readonly validationError = signal('');
-  readonly isSubmitting = signal(false);
-  readonly hasSubmitted = signal(false);
-  readonly resultsExpanded = signal(true);
-  readonly isExpired = computed(() => this.hasDeadlinePassed(this.currentTime()));
-  readonly votingDisabled = computed(
+  private readonly currentTime: WritableSignal<number> = signal(Date.now());
+  readonly survey: WritableSignal<SurveyDetails | null> = signal<SurveyDetails | null>(null);
+  readonly supabase: Supabase = inject(Supabase);
+  readonly newSurveyRequested: OutputEmitterRef<void> = output<void>();
+  readonly surveyCompleted: OutputEmitterRef<void> = output<void>();
+  readonly closeRequested: OutputEmitterRef<void> = output<void>();
+  readonly surveyId: InputSignal<string> = input.required<string>();
+  readonly questions: WritableSignal<SurveyQuestion[]> = signal<SurveyQuestion[]>([]);
+  readonly selectedAnswers: WritableSignal<Record<string, string[]>> = signal<
+    Record<string, string[]>
+  >({});
+  readonly validationError: WritableSignal<string> = signal('');
+  readonly isSubmitting: WritableSignal<boolean> = signal(false);
+  readonly hasSubmitted: WritableSignal<boolean> = signal(false);
+  readonly resultsExpanded: WritableSignal<boolean> = signal(true);
+  readonly isExpired: Signal<boolean> = computed(() => this.hasDeadlinePassed(this.currentTime()));
+  readonly votingDisabled: Signal<boolean> = computed(
     () => !this.survey() || this.isExpired() || this.isSubmitting() || this.hasSubmitted(),
   );
 
@@ -59,7 +71,8 @@ export class SurveyView implements OnChanges {
   }
 
   private async loadSurveyDetails(): Promise<void> {
-    const { data, error } = await this.supabase.getSurveyDetails(this.surveyId());
+    const { data, error }: PostgrestSingleResponse<SurveyDetails> =
+      await this.supabase.getSurveyDetails(this.surveyId());
     if (error) {
       console.error('Survey konnte nicht geladen werden:', error.message);
       return;
@@ -69,7 +82,8 @@ export class SurveyView implements OnChanges {
 
   private async loadSurveyQuestions(): Promise<void> {
     const surveyId: string = this.surveyId();
-    const { data, error } = await this.supabase.getSurveyQuestions(surveyId);
+    const { data, error }: PostgrestSingleResponse<SurveyQuestion[]> =
+      await this.supabase.getSurveyQuestions(surveyId);
     if (this.destroyRef.destroyed || surveyId !== this.surveyId()) return;
     if (error) {
       console.error('Fragen konnten nicht geladen werden:', error.message);
@@ -98,8 +112,8 @@ export class SurveyView implements OnChanges {
   }
 
   answerPercentage(question: SurveyQuestion, voteCount: number): number {
-    const total = this.totalVotes(question);
-    return total > 0 ? Math.round((voteCount / total) * 100) : 0;
+    const total: number = this.totalVotes(question);
+    return total > 0 ? Math.round((voteCount / total) * PERCENTAGE_SCALE) : 0;
   }
 
   hasVotes(): boolean {
@@ -107,7 +121,7 @@ export class SurveyView implements OnChanges {
   }
 
   answerLetter(index: number): string {
-    return String.fromCharCode(65 + index);
+    return String.fromCharCode(FIRST_ANSWER_CHAR_CODE + index);
   }
 
   async onCompleteSurvey(): Promise<void> {
@@ -141,7 +155,7 @@ export class SurveyView implements OnChanges {
   }
 
   private loadFromLocalStorageVotes(): Record<string, string[]> {
-    const storedVotes = localStorage.getItem(`survey-vote-${this.surveyId()}`);
+    const storedVotes: string | null = localStorage.getItem(`survey-vote-${this.surveyId()}`);
     const votes: Record<string, string[]> = storedVotes ? JSON.parse(storedVotes) : {};
     this.hasSubmitted.set(Object.keys(votes).length > 0);
     return votes;
@@ -149,7 +163,7 @@ export class SurveyView implements OnChanges {
 
   onAnswerChange(question: SurveyQuestion, answerId: string, value: boolean | string): void {
     if (this.votingDisabled() || this.hasDeadlinePassed(Date.now())) return;
-    const selected = this.selectedAnswers()[question.id] ?? [];
+    const selected: string[] = this.selectedAnswers()[question.id] ?? [];
     let next: string[];
     if (question.allow_multiple_answers) {
       next = selected.filter((id) => id !== answerId);

@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
+import type { WritableSignal } from '@angular/core';
+
 import { Header } from '../../shared/components/header/header';
 import { Hero } from './hero/hero';
-import { SurveyOverview } from './survey-overview/survey-overview';
-import { SurveyList } from './survey-list/survey-list';
 import { SurveyForm } from './survey-form/survey-form';
+import { SurveyList } from './survey-list/survey-list';
+import { SurveyOverview } from './survey-overview/survey-overview';
 import { SurveyView } from './survey-view/survey-view';
 
 @Component({
@@ -13,15 +15,15 @@ import { SurveyView } from './survey-view/survey-view';
   templateUrl: './home.html',
 })
 export class Home {
-  readonly isSurveyFormOpen = signal(false);
-  readonly selectedSurveyId = signal('');
+  readonly isSurveyFormOpen: WritableSignal<boolean> = signal(false);
+  readonly selectedSurveyId: WritableSignal<string> = signal('');
 
   onSurveyPublished(surveyId: string): void {
     this.selectedSurveyId.set(surveyId);
     this.isSurveyFormOpen.set(false);
   }
 
-  onCancel() {
+  onCancel(): void {
     this.selectedSurveyId.set('');
     this.isSurveyFormOpen.set(false);
   }
