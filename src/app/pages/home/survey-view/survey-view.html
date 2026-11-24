@@ -77,7 +77,7 @@
                       <input
                         class="survey-view__answer-input"
                         type="checkbox"
-                        [disabled]="isSubmitting() || hasSubmitted()"
+                        [disabled]="votingDisabled()"
                         [name]="'answer-' + answer.id"
                         [ngModel]="(selectedAnswers()[question.id] ?? []).includes(answer.id)"
                         (ngModelChange)="onAnswerChange(question, answer.id, $event)"
@@ -86,7 +86,7 @@
                       <input
                         class="survey-view__answer-input"
                         type="radio"
-                        [disabled]="isSubmitting() || hasSubmitted()"
+                        [disabled]="votingDisabled()"
                         [name]="'question-' + question.id"
                         [value]="answer.id"
                         [ngModel]="selectedAnswers()[question.id]?.[0]"
@@ -110,7 +110,7 @@
         }
         <footer class="survey-view__actions">
           <button
-            [disabled]="isSubmitting() || hasSubmitted()"
+            [disabled]="votingDisabled()"
             (click)="onCompleteSurvey()"
             class="survey-view__complete"
             type="button"

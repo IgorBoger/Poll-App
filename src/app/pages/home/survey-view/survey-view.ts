@@ -1,13 +1,15 @@
-import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import type { OnChanges } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
+import { switchMap, timer } from 'rxjs';
 import type { Subscription } from 'rxjs';
 import { Supabase } from '../../../shared/services/supabase/supabase';
 import type { SurveyDetails } from '../../../shared/services/supabase/survey';
 import { DatePipe } from '@angular/common';
 import type { SurveyQuestion } from '../../../shared/services/supabase/survey-question';
 import { FormsModule } from '@angular/forms';
+
+const DEADLINE_CHECK_INTERVAL_MS = 1000;
 
 @Component({
   imports: [DatePipe, FormsModule],
@@ -18,6 +20,7 @@ import { FormsModule } from '@angular/forms';
 export class SurveyView implements OnChanges {
   private readonly destroyRef = inject(DestroyRef);
   private voteSubscription: Subscription | null = null;
+  private readonly currentTime = signal(Date.now());
   readonly survey = signal<SurveyDetails | null>(null);
   readonly supabase = inject(Supabase);
   readonly newSurveyRequested = output<void>();
@@ -30,6 +33,21 @@ export class SurveyView implements OnChanges {
   readonly isSubmitting = signal(false);
   readonly hasSubmitted = signal(false);
   readonly resultsExpanded = signal(true);
+  readonly isExpired = computed(() => this.hasDeadlinePassed(this.currentTime()));
+  readonly votingDisabled = computed(
+    () => !this.survey() || this.isExpired() || this.isSubmitting() || this.hasSubmitted(),
+  );
+
+  constructor() {
+    timer(0, DEADLINE_CHECK_INTERVAL_MS)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.currentTime.set(Date.now()));
+  }
+
+  private hasDeadlinePassed(now: number): boolean {
+    const deadline: string | null | undefined = this.survey()?.ends_at;
+    return deadline != null && Date.parse(deadline) <= now;
+  }
 
   ngOnChanges(): void {
     this.voteSubscription?.unsubscribe();
@@ -93,7 +111,7 @@ export class SurveyView implements OnChanges {
   }
 
   async onCompleteSurvey(): Promise<void> {
-    if (this.isSubmitting() || this.hasSubmitted()) return;
+    if (this.votingDisabled() || this.hasDeadlinePassed(Date.now())) return;
     if (!this.areAllQuestionsAnswered()) {
       this.validationError.set('Please answer all questions.');
       return;
@@ -130,7 +148,7 @@ export class SurveyView implements OnChanges {
   }
 
   onAnswerChange(question: SurveyQuestion, answerId: string, value: boolean | string): void {
-    if (this.isSubmitting() || this.hasSubmitted()) return;
+    if (this.votingDisabled() || this.hasDeadlinePassed(Date.now())) return;
     const selected = this.selectedAnswers()[question.id] ?? [];
     let next: string[];
     if (question.allow_multiple_answers) {
