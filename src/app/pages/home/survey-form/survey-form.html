@@ -21,9 +21,14 @@
 
     <!-- <form> -->
     <form #surveyForm="ngForm" (ngSubmit)="onPublish(surveyForm, publishButton, publishedDialog)">
+      <p class="survey-form__required-note">
+        <span class="survey-form__required" aria-hidden="true">*</span> Required fields
+      </p>
       <div class="survey-form__fields">
         <div>
-          <label for="survey-name">Survey name</label>
+          <label for="survey-name">
+            Survey name <span class="survey-form__required" aria-hidden="true">*</span>
+          </label>
           <div class="survey-form__field-action">
             <input
               #surveyNameControl="ngModel"
@@ -32,6 +37,7 @@
               [(ngModel)]="surveyName"
               type="text"
               required
+              pattern=".*\S.*"
             />
             <button
               (click)="surveyName = ''"
@@ -46,7 +52,7 @@
           <span
             class="survey-form__error"
             [class.survey-form__error--visible]="
-              surveyNameControl.touched && surveyNameControl.hasError('required')
+              surveyNameControl.touched && surveyNameControl.invalid
             "
             >Enter a survey name.</span
           >
@@ -75,6 +81,9 @@
               </div>
             </div>
             <div class="survey-form__category-control">
+              <label for="survey-category">
+                Category <span class="survey-form__required" aria-hidden="true">*</span>
+              </label>
               <div class="survey-form__category-trigger">
                 <select
                   class="survey-form__category-filter"
@@ -141,7 +150,10 @@
           <fieldset class="survey-form__question">
             <legend>
               <span class="survey-form__field-action">
-                {{ $index + 1 }}. Question
+                <span>
+                  {{ $index + 1 }}. Question
+                  <span class="survey-form__required" aria-hidden="true">*</span>
+                </span>
                 <button
                   (click)="onDeleteQuestion($index)"
                   class="survey-form__delete"
@@ -160,12 +172,13 @@
               type="text"
               aria-label="Question {{ $index + 1 }}"
               required
+              pattern=".*\S.*"
             />
 
             <span
               class="survey-form__error"
               [class.survey-form__error--visible]="
-                questionControl.touched && questionControl.hasError('required')
+                questionControl.touched && questionControl.invalid
               "
               >Enter a question.</span
             >
@@ -176,7 +189,8 @@
               aria-labelledby="survey-answers-label-{{ $index + 1 }}"
             >
               <div class="survey-form__answers-header">
-                <span id="survey-answers-label-{{ $index + 1 }}">Answers</span
+                <span id="survey-answers-label-{{ $index + 1 }}">
+                  Answers <span class="survey-form__required" aria-hidden="true">*</span></span
                 ><label class="survey-form__multiple">
                   <span class="survey-form__checkbox">
                     <input
@@ -207,6 +221,7 @@
                       type="text"
                       aria-label="Answer {{ answerLetter($index) }}"
                       required
+                      pattern=".*\S.*"
                     />
                   </label>
                   <button
@@ -223,7 +238,7 @@
                 <span
                   class="survey-form__error survey-form__error--answer"
                   [class.survey-form__error--visible]="
-                    answerControl.touched && answerControl.hasError('required')
+                    answerControl.touched && answerControl.invalid
                   "
                   >Enter an answer.</span
                 >

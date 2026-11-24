@@ -2,6 +2,17 @@
   --answer-letter-width: 24px;
   --answer-column-gap: 0px;
 
+  &__required {
+    color: var(--color-accent-strong);
+    font-weight: 700;
+  }
+
+  &__required-note {
+    margin: 0 0 12px;
+    color: var(--color-accent-soft);
+    font: 400 14px / 1.4 var(--font-body);
+  }
+
   &__error {
     display: block;
     color: var(--color-error);
