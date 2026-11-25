@@ -42,9 +42,10 @@
   &__button {
     display: inline-flex;
     align-items: center;
-    padding: 12px 20px;
+    gap: 0;
+    padding: 12px 16px;
     border: 0;
-    border-radius: 8px;
+    border-radius: 10px;
     font-family: var(--font-button);
     font-weight: 700;
     font-size: 18px;
@@ -65,7 +66,8 @@
     }
 
     &:is(:hover, :focus-visible) .hero__button-icon {
-      width: 32px;
+      width: 20px;
+      margin-inline-start: 10px;
       opacity: 1;
     }
   }
@@ -75,10 +77,12 @@
     align-items: center;
     justify-content: flex-end;
     width: 0;
+    margin-inline-start: 0;
     overflow: hidden;
     opacity: 0;
     transition:
       width 250ms ease,
+      margin-inline-start 250ms ease,
       opacity 250ms ease;
 
     img {
