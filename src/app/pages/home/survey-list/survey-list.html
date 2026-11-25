@@ -1,4 +1,5 @@
-<section class="survey-list" aria-label="All surveys">
+<section class="survey-list" aria-labelledby="survey-list-heading">
+  <h2 id="survey-list-heading" class="survey-list__heading">All surveys</h2>
   <div class="survey-list__toolbar">
     <div class="survey-list__statuses" role="group" aria-label="Survey status">
       <button
@@ -60,16 +61,11 @@
     <div class="survey-list__scroll-frame">
       <ul class="survey-list__cards">
         @for (survey of visibleSurveys(); track survey.id) {
-          <li
-            class="survey-list__card"
-            role="button"
-            tabindex="0"
-            (click)="surveyRequested.emit(survey.id)"
-            (keydown.enter)="surveyRequested.emit(survey.id)"
-            (keydown.space)="$event.preventDefault(); surveyRequested.emit(survey.id)"
-          >
+          <li class="survey-list__card">
             <p class="survey-list__category">{{ survey.category }}</p>
-            <h3 class="survey-list__title">{{ survey.title }}</h3>
+            <h3 class="survey-list__title" id="survey-list-title-{{ survey.id }}">
+              {{ survey.title }}
+            </h3>
             <p class="survey-list__deadline">
               @if (survey.ends_at; as deadline) {
                 <time [attr.datetime]="deadline">{{ formatDeadline(deadline) }}</time>
@@ -77,6 +73,12 @@
                 No deadline
               }
             </p>
+            <button
+              class="survey-list__open"
+              type="button"
+              aria-labelledby="survey-list-title-{{ survey.id }}"
+              (click)="surveyRequested.emit(survey.id)"
+            ></button>
           </li>
         }
       </ul>

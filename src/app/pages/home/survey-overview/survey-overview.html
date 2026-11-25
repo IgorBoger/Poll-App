@@ -13,19 +13,20 @@
     } @else {
       <ul class="survey-overview__cards" (wheel)="scrollCardsWithWheel($event)">
         @for (survey of surveyHighlights(); track survey.id) {
-          <li
-            class="survey-overview__card"
-            role="button"
-            tabindex="0"
-            (click)="surveyRequested.emit(survey.id)"
-            (keydown.enter)="surveyRequested.emit(survey.id)"
-            (keydown.space)="$event.preventDefault(); surveyRequested.emit(survey.id)"
-          >
+          <li class="survey-overview__card">
             <p class="survey-overview__category">{{ survey.category }}</p>
-            <h4 class="survey-overview__card-title">{{ survey.title }}</h4>
+            <h4 class="survey-overview__card-title" id="survey-overview-title-{{ survey.id }}">
+              {{ survey.title }}
+            </h4>
             <p class="survey-overview__deadline">
               <time [attr.datetime]="survey.ends_at">{{ formatDeadline(survey.ends_at) }}</time>
             </p>
+            <button
+              class="survey-overview__open"
+              type="button"
+              aria-labelledby="survey-overview-title-{{ survey.id }}"
+              (click)="surveyRequested.emit(survey.id)"
+            ></button>
           </li>
         }
       </ul>
