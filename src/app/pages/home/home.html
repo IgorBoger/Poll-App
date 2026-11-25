@@ -1,6 +1,5 @@
 @if (selectedSurveyId()) {
   <main-survey-view
-    (surveyCompleted)="onCancel()"
     (closeRequested)="onCancel()"
     [surveyId]="selectedSurveyId()"
     (newSurveyRequested)="isSurveyFormOpen.set(true)"

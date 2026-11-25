@@ -37,7 +37,6 @@ export class SurveyView implements OnChanges {
   readonly survey: WritableSignal<SurveyDetails | null> = signal<SurveyDetails | null>(null);
   readonly supabase: Supabase = inject(Supabase);
   readonly newSurveyRequested: OutputEmitterRef<void> = output<void>();
-  readonly surveyCompleted: OutputEmitterRef<void> = output<void>();
   readonly closeRequested: OutputEmitterRef<void> = output<void>();
   readonly surveyId: InputSignal<string> = input.required<string>();
   readonly questions: WritableSignal<SurveyQuestion[]> = signal<SurveyQuestion[]>([]);
@@ -197,7 +196,7 @@ export class SurveyView implements OnChanges {
   }
 
   /**
-   * Submits the selected answers, stores successful votes locally, and emits completion.
+   * Submits answers, stores the completed state, and refreshes the visible results.
    *
    * @param {string[]} answerIds - Identifiers of all selected answer options.
    * @returns {Promise<void>} Resolves after the submission attempt and submitting-state cleanup.
@@ -208,13 +207,27 @@ export class SurveyView implements OnChanges {
       await this.supabase.submitSurveyVotes(this.surveyId(), answerIds);
       this.hasSubmitted.set(true);
       this.saveVotesToLocalStorage();
-      this.surveyCompleted.emit();
+      this.resultsExpanded.set(true);
+      void this.refreshResults();
     } catch (error: unknown) {
       const text: string = error instanceof Error ? error.message : 'Could not save your answers.';
       this.validationError.set(text);
     } finally {
       this.isSubmitting.set(false);
     }
+  }
+
+  /**
+   * Reloads results after voting while retaining the existing realtime subscription.
+   *
+   * @returns {Promise<void>} Resolves after handling the results request.
+   */
+  private async refreshResults(): Promise<void> {
+    const surveyId: string = this.surveyId();
+    const { data, error }: PostgrestSingleResponse<SurveyQuestion[]> =
+      await this.supabase.getSurveyQuestions(surveyId);
+    if (this.destroyRef.destroyed || surveyId !== this.surveyId()) return;
+    if (!error) this.questions.set(data ?? []);
   }
 
   /**

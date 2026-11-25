@@ -186,11 +186,10 @@
   }
 
   &__status-row {
-    display: contents;
-  }
-
-  &__close {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
 
   &__status {
@@ -338,6 +337,9 @@
 
   &__actions {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
     justify-content: flex-end;
     margin-top: 40px;
   }
@@ -355,8 +357,12 @@
     font: 700 16px / 1 var(--font-button);
     cursor: pointer;
 
-    &:hover {
+    &:enabled:hover {
       background-color: rgba(255, 183, 112, 0.6);
+    }
+
+    &:disabled {
+      cursor: default;
     }
 
     &:focus-visible {
@@ -368,6 +374,11 @@
   &__validation-error {
     margin: 24px 0 0;
     color: var(--color-error);
+    font: 400 14px / 1.4 var(--font-body);
+  }
+
+  &__confirmation {
+    margin: 0;
     font: 400 14px / 1.4 var(--font-body);
   }
 }

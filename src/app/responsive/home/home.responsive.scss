@@ -1,7 +1,6 @@
 @media (max-width: 900px) {
   :host {
     padding: 48px clamp(16px, calc(4vw - 4px), 32px) 32px;
-    margin-block-end: 64px;
     background-color: var(--color-background);
   }
 }

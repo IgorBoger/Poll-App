@@ -1,3 +1,41 @@
+.survey-view__close {
+  display: inline-flex;
+  padding: 8px 12px;
+  margin-right: 16px;
+  border: 0;
+  border-radius: 10px;
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  cursor: pointer;
+
+  span {
+    position: relative;
+    width: 16px;
+    height: 16px;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 0;
+      width: 16px;
+      height: 2px;
+      background-color: currentColor;
+      transform: rotate(45deg);
+    }
+
+    &::after {
+      transform: rotate(-45deg);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+}
+
 @media (min-width: 901px) and (max-width: 1100px) {
   .survey-view {
     &__body {
@@ -30,44 +68,6 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-    }
-
-    &__close {
-      display: inline-flex;
-      padding: 8px 12px;
-      margin-right: 16px;
-      border: 0;
-      border-radius: 10px;
-      background-color: var(--color-accent);
-      color: var(--color-background);
-      cursor: pointer;
-
-      span {
-        position: relative;
-        width: 16px;
-        height: 16px;
-
-        &::before,
-        &::after {
-          content: '';
-          position: absolute;
-          top: 7px;
-          left: 0;
-          width: 16px;
-          height: 2px;
-          background-color: currentColor;
-          transform: rotate(45deg);
-        }
-
-        &::after {
-          transform: rotate(-45deg);
-        }
-      }
-
-      &:focus-visible {
-        outline: 2px solid currentColor;
-        outline-offset: 4px;
-      }
     }
 
     &__content {

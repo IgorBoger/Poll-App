@@ -111,6 +111,9 @@
           </p>
         }
         <footer class="survey-view__actions">
+          @if (hasSubmitted()) {
+            <p class="survey-view__confirmation" role="status">Your vote has been submitted.</p>
+          }
           <button
             [disabled]="votingDisabled()"
             (click)="onCompleteSurvey()"
@@ -119,6 +122,8 @@
           >
             @if (isSubmitting()) {
               Saving…
+            } @else if (hasSubmitted()) {
+              Vote submitted
             } @else {
               <span>Complete<span class="survey-view__complete-suffix"> survey</span></span>
               <img src="images/survey-form/check.png" alt="" width="18" height="16" />
