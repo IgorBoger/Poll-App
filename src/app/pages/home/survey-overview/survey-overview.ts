@@ -9,6 +9,9 @@ const DAY_IN_MS: number = 24 * 60 * 60 * 1000;
 const WHEEL_LINE_HEIGHT_PX: number = 16;
 const SCROLL_EDGE_TOLERANCE_PX: number = 1;
 
+/**
+ * Displays the ending-soon survey cards and their horizontal scrolling behavior.
+ */
 @Component({
   imports: [],
   selector: 'main-survey-overview',
@@ -24,10 +27,20 @@ export class SurveyOverview implements OnInit {
     'loading' | 'ready' | 'error'
   >('loading');
 
+  /**
+   * Starts loading ending-soon surveys when the overview is initialized.
+   *
+   * @returns {void}
+   */
   ngOnInit(): void {
     void this.loadSurveyHighlights();
   }
 
+  /**
+   * Loads ending-soon surveys using the time captured when the overview was created.
+   *
+   * @returns {Promise<void>} Resolves after the highlighted surveys and loading status are updated.
+   */
   private async loadSurveyHighlights(): Promise<void> {
     const { data, error }: PostgrestSingleResponse<Survey[]> =
       await this.supabase.getSurveyHighlights(this.loadedAt);
@@ -35,6 +48,12 @@ export class SurveyOverview implements OnInit {
     this.status.set(error ? 'error' : 'ready');
   }
 
+  /**
+   * Formats days remaining relative to the overview load time, or a missing deadline.
+   *
+   * @param {string | null} endsAt - Survey deadline, or null when the survey has no end date.
+   * @returns {string} The remaining-day label or the no-deadline label.
+   */
   protected formatDeadline(endsAt: string | null): string {
     if (endsAt === null) {
       return 'No deadline';
@@ -43,6 +62,12 @@ export class SurveyOverview implements OnInit {
     return `Ends in ${days} ${days === 1 ? 'day' : 'days'}`;
   }
 
+  /**
+   * Converts eligible vertical wheel movement into horizontal card scrolling.
+   *
+   * @param {WheelEvent} event - Wheel event originating from the scrollable card list.
+   * @returns {void}
+   */
   scrollCardsWithWheel(event: WheelEvent): void {
     if (event.ctrlKey || event.shiftKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) {
       return;
@@ -55,6 +80,13 @@ export class SurveyOverview implements OnInit {
     cards.scrollLeft += this.getWheelOffset(event, cards.clientWidth);
   }
 
+  /**
+   * Checks whether the card list can scroll in the requested wheel direction.
+   *
+   * @param {HTMLElement} cards - Scrollable container holding the survey cards.
+   * @param {number} deltaY - Vertical wheel delta indicating the requested direction.
+   * @returns {boolean} Whether further horizontal scrolling is possible in that direction.
+   */
   private canScrollCards(cards: HTMLElement, deltaY: number): boolean {
     const maxScroll: number = cards.scrollWidth - cards.clientWidth;
     return (
@@ -63,6 +95,13 @@ export class SurveyOverview implements OnInit {
     );
   }
 
+  /**
+   * Converts pixel, line, or page wheel deltas into a horizontal pixel offset.
+   *
+   * @param {WheelEvent} event - Wheel event containing the delta and its unit.
+   * @param {number} pageWidth - Container width used to convert page-based deltas.
+   * @returns {number} The horizontal scroll distance in pixels.
+   */
   private getWheelOffset(event: WheelEvent, pageWidth: number): number {
     if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
       return event.deltaY * WHEEL_LINE_HEIGHT_PX;

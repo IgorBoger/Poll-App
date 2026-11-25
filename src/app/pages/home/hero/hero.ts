@@ -1,5 +1,8 @@
 import { Component, output, OutputEmitterRef } from '@angular/core';
 
+/**
+ * Displays the home-screen introduction and emits requests to create a survey.
+ */
 @Component({
   imports: [],
   selector: 'main-hero',

@@ -21,6 +21,9 @@ const DEADLINE_CHECK_INTERVAL_MS: number = 1000;
 const FIRST_ANSWER_CHAR_CODE: number = 65;
 const PERCENTAGE_SCALE: number = 100;
 
+/**
+ * Loads survey details, manages voting, and displays realtime results.
+ */
 @Component({
   imports: [DatePipe, FormsModule],
   selector: 'main-survey-view',
@@ -50,17 +53,31 @@ export class SurveyView implements OnChanges {
     () => !this.survey() || this.isExpired() || this.isSubmitting() || this.hasSubmitted(),
   );
 
+  /**
+   * Starts deadline checks and releases the timer when the view is destroyed.
+   */
   constructor() {
     timer(0, DEADLINE_CHECK_INTERVAL_MS)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.currentTime.set(Date.now()));
   }
 
+  /**
+   * Checks whether a survey with a deadline has ended at the supplied time.
+   *
+   * @param {number} now - Comparison time in milliseconds since the Unix epoch.
+   * @returns {boolean} Whether the deadline has passed; false when no deadline is available.
+   */
   private hasDeadlinePassed(now: number): boolean {
     const deadline: string | null | undefined = this.survey()?.ends_at;
     return deadline != null && Date.parse(deadline) <= now;
   }
 
+  /**
+   * Stops the previous vote subscription and loads the selected survey and saved answers.
+   *
+   * @returns {void}
+   */
   ngOnChanges(): void {
     this.voteSubscription?.unsubscribe();
     if (this.surveyId()) {
@@ -70,6 +87,11 @@ export class SurveyView implements OnChanges {
     }
   }
 
+  /**
+   * Loads the selected survey details and logs a database error if loading fails.
+   *
+   * @returns {Promise<void>} Resolves after the details request has been handled.
+   */
   private async loadSurveyDetails(): Promise<void> {
     const { data, error }: PostgrestSingleResponse<SurveyDetails> =
       await this.supabase.getSurveyDetails(this.surveyId());
@@ -80,6 +102,11 @@ export class SurveyView implements OnChanges {
     this.survey.set(data);
   }
 
+  /**
+   * Loads questions for the selected survey and starts watching its vote changes.
+   *
+   * @returns {Promise<void>} Resolves after handling loading, stale responses, and subscription setup.
+   */
   private async loadSurveyQuestions(): Promise<void> {
     const surveyId: string = this.surveyId();
     const { data, error }: PostgrestSingleResponse<SurveyQuestion[]> =
@@ -93,7 +120,12 @@ export class SurveyView implements OnChanges {
     this.watchSurveyVotes(surveyId);
   }
 
-  /** Refreshes results on vote changes without changing the participant's selection. */
+  /**
+   * Refreshes results on realtime notifications without changing the selected answers.
+   *
+   * @param {string} surveyId - Identifier of the survey whose results are refreshed.
+   * @returns {void}
+   */
   private watchSurveyVotes(surveyId: string): void {
     const questionIds: string[] = this.questions().map((question) => question.id);
     this.voteSubscription = this.supabase
@@ -107,23 +139,52 @@ export class SurveyView implements OnChanges {
       });
   }
 
+  /**
+   * Totals all answer-option vote counts for a question.
+   *
+   * @param {SurveyQuestion} question - Question containing the answer counts to sum.
+   * @returns {number} The total number of selected answers, including multiple selections.
+   */
   totalVotes(question: SurveyQuestion): number {
     return question.answers.reduce((sum, answer) => sum + answer.vote_count, 0);
   }
 
+  /**
+   * Calculates an answer count as a rounded percentage of all selections for a question.
+   *
+   * @param {SurveyQuestion} question - Question used to calculate the total answer selections.
+   * @param {number} voteCount - Vote count of the answer option being displayed.
+   * @returns {number} The rounded percentage, or zero when the question has no votes.
+   */
   answerPercentage(question: SurveyQuestion, voteCount: number): number {
     const total: number = this.totalVotes(question);
     return total > 0 ? Math.round((voteCount / total) * PERCENTAGE_SCALE) : 0;
   }
 
+  /**
+   * Checks whether any loaded question has at least one recorded answer selection.
+   *
+   * @returns {boolean} Whether any result is available.
+   */
   hasVotes(): boolean {
     return this.questions().some((question) => this.totalVotes(question) > 0);
   }
 
+  /**
+   * Returns the uppercase letter assigned to an answer option.
+   *
+   * @param {number} index - Zero-based index of the answer option.
+   * @returns {string} The corresponding uppercase answer letter.
+   */
   answerLetter(index: number): string {
     return String.fromCharCode(FIRST_ANSWER_CHAR_CODE + index);
   }
 
+  /**
+   * Validates that voting is allowed and every question is answered before saving.
+   *
+   * @returns {Promise<void>} Resolves after validation or the vote submission attempt.
+   */
   async onCompleteSurvey(): Promise<void> {
     if (this.votingDisabled() || this.hasDeadlinePassed(Date.now())) return;
     if (!this.areAllQuestionsAnswered()) {
@@ -135,6 +196,12 @@ export class SurveyView implements OnChanges {
     await this.saveVotes(answerIds);
   }
 
+  /**
+   * Submits the selected answers, stores successful votes locally, and emits completion.
+   *
+   * @param {string[]} answerIds - Identifiers of all selected answer options.
+   * @returns {Promise<void>} Resolves after the submission attempt and submitting-state cleanup.
+   */
   private async saveVotes(answerIds: string[]): Promise<void> {
     this.isSubmitting.set(true);
     try {
@@ -150,10 +217,20 @@ export class SurveyView implements OnChanges {
     }
   }
 
+  /**
+   * Stores the selected answer identifiers under the current survey-specific storage key.
+   *
+   * @returns {void}
+   */
   private saveVotesToLocalStorage(): void {
     localStorage.setItem(`survey-vote-${this.surveyId()}`, JSON.stringify(this.selectedAnswers()));
   }
 
+  /**
+   * Reads saved answer selections and restores the local submitted-state flag.
+   *
+   * @returns {Record<string, string[]>} Saved answer identifiers grouped by question, or an empty record.
+   */
   private loadFromLocalStorageVotes(): Record<string, string[]> {
     const storedVotes: string | null = localStorage.getItem(`survey-vote-${this.surveyId()}`);
     const votes: Record<string, string[]> = storedVotes ? JSON.parse(storedVotes) : {};
@@ -161,6 +238,14 @@ export class SurveyView implements OnChanges {
     return votes;
   }
 
+  /**
+   * Updates a permitted answer selection according to single- or multiple-choice rules.
+   *
+   * @param {SurveyQuestion} question - Question defining the answer selection rules.
+   * @param {string} answerId - Identifier of the answer option being changed.
+   * @param {boolean | string} value - Checkbox checked state or radio selection value.
+   * @returns {void}
+   */
   onAnswerChange(question: SurveyQuestion, answerId: string, value: boolean | string): void {
     if (this.votingDisabled() || this.hasDeadlinePassed(Date.now())) return;
     const selected: string[] = this.selectedAnswers()[question.id] ?? [];
@@ -174,6 +259,11 @@ export class SurveyView implements OnChanges {
     this.selectedAnswers.update((current) => ({ ...current, [question.id]: next }));
   }
 
+  /**
+   * Checks that at least one question exists and every question has a selected answer.
+   *
+   * @returns {boolean} Whether all loaded questions have an answer selection.
+   */
   private areAllQuestionsAnswered(): boolean {
     if (this.questions().length === 0) return false;
     return this.questions().every(

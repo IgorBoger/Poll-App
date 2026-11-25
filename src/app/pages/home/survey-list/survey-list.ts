@@ -7,6 +7,9 @@ import type { Survey } from '../../../shared/services/supabase/survey';
 
 const DAY_IN_MS: number = 24 * 60 * 60 * 1000;
 
+/**
+ * Displays surveys filtered by active or past status and category.
+ */
 @Component({
   selector: 'main-survey-list',
   styleUrl: './survey-list.scss',
@@ -39,16 +42,32 @@ export class SurveyList implements OnInit {
   });
   readonly surveyRequested: OutputEmitterRef<string> = output<string>();
 
+  /**
+   * Starts loading the surveys when the list is initialized.
+   *
+   * @returns {void}
+   */
   ngOnInit(): void {
     void this.loadSurveys();
   }
 
+  /**
+   * Loads the survey list and records whether loading succeeded or failed.
+   *
+   * @returns {Promise<void>} Resolves after the survey data and loading status are updated.
+   */
   private async loadSurveys(): Promise<void> {
     const { data, error }: PostgrestSingleResponse<Survey[]> = await this.supabase.getSurveys();
     this.surveys.set(data ?? []);
     this.status.set(error ? 'error' : 'ready');
   }
 
+  /**
+   * Formats the remaining time as rounded-up days or marks an elapsed deadline.
+   *
+   * @param {string} endsAt - Survey deadline in a date format accepted by Date.parse.
+   * @returns {string} The remaining-day label or the ended label.
+   */
   protected formatDeadline(endsAt: string): string {
     const remainingMs: number = Date.parse(endsAt) - Date.now();
     if (remainingMs <= 0) {
