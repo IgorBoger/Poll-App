@@ -5,16 +5,18 @@
   z-index: 5;
   display: block;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   background-color: #fff;
   color: var(--color-text-dark);
 }
 
 .survey-view {
   min-height: 100%;
-  padding: 40px clamp(16px, 4vw, 64px);
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 32px 80px;
 
   &__content {
-    max-width: 1218px;
     margin-inline: auto;
   }
 

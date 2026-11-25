@@ -47,6 +47,15 @@
   box-sizing: border-box;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
+html:has(main-survey-view, main-survey-form) {
+  overflow: hidden;
+  scrollbar-gutter: auto;
+}
+
 body {
   margin: 0;
   font-family: var(--font-body);
