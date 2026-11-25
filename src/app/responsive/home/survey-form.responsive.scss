@@ -26,7 +26,7 @@
     }
 
     &__content {
-      padding: 0;
+      padding: 0 clamp(16px, calc(4vw - 4px), 32px);
     }
 
     &__brand {
@@ -34,13 +34,13 @@
       align-items: flex-start;
       justify-content: flex-start;
       width: 100%;
-      padding: 48px 16px 53px;
+      padding: 48px 0 53px;
     }
 
     &__panel {
-      width: min(100%, 480px);
+      width: 100%;
       margin-inline: auto;
-      padding: 40px 17px 54px;
+      padding: 40px 17px 32px;
       border-top-right-radius: 100px;
     }
 
@@ -141,12 +141,12 @@
 
     &__add-question {
       justify-self: center;
-      margin-top: 72px;
+      margin-top: 40px;
     }
 
     &__footer {
       justify-content: center;
-      margin-top: 48px;
+      margin-top: 32px;
     }
 
     &__publish {

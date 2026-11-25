@@ -3,8 +3,8 @@
 
 :host {
   display: block;
-  // padding: 32px clamp(0px, 4.2vw, 60px) 0;
-  padding: 32px;
+  // padding: 48px;
+  padding: 48px 48px 0;
 }
 
 .survey-list {
@@ -82,7 +82,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
-    max-height: 440px;
+    max-height: 500px;
     overflow-y: auto;
     margin: 0;
     padding: 24px 0 0;
@@ -107,6 +107,7 @@
 
   &__card {
     position: relative;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -153,6 +154,11 @@
   }
 
   &__title {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: clamp(20px, calc(18.43478px + 0.434783vw), 24px);
     font-weight: 700;
     line-height: 1;

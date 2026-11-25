@@ -23,7 +23,7 @@
 
 @media (max-width: 900px) {
   .survey-view {
-    padding: 48px 16px 32px;
+    padding: 48px clamp(16px, calc(4vw - 4px), 32px) 32px;
 
     &__status-row {
       display: flex;
@@ -71,7 +71,7 @@
     }
 
     &__content {
-      max-width: 480px;
+      width: 100%;
     }
 
     &__create,
