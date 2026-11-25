@@ -30,7 +30,9 @@
           </div>
           <div class="survey-view__metadata">
             <p class="survey-view__deadline">
-              @if (survey()?.ends_at; as deadline) {
+              @if (isExpired()) {
+                Ended
+              } @else if (survey()?.ends_at; as deadline) {
                 Ends on
                 <time [attr.datetime]="deadline">
                   {{ deadline | date: 'dd.MM.yyyy' }}

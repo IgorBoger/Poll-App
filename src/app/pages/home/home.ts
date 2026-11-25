@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
-import type { WritableSignal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, HostListener, inject, signal, viewChild } from '@angular/core';
+import type { Signal, WritableSignal } from '@angular/core';
 
 import { Header } from '../../shared/components/header/header';
 import { Hero } from './hero/hero';
@@ -18,8 +19,30 @@ import { SurveyView } from './survey-view/survey-view';
   templateUrl: './home.html',
 })
 export class Home {
+  private readonly document: Document = inject(DOCUMENT);
+  private readonly surveyForm: Signal<SurveyForm | undefined> = viewChild(SurveyForm);
+  private readonly surveyView: Signal<SurveyView | undefined> = viewChild(SurveyView);
   readonly isSurveyFormOpen: WritableSignal<boolean> = signal(false);
   readonly selectedSurveyId: WritableSignal<string> = signal('');
+
+  /**
+   * Closes the active survey overlay with Escape while preserving native dialog handling.
+   *
+   * @param {Event} event - Escape key event received by the document.
+   * @returns {void}
+   */
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscape(event: Event): void {
+    if (!(event instanceof KeyboardEvent)) return;
+    if (event.defaultPrevented || event.repeat || event.isComposing) return;
+    if (this.document.querySelector('dialog[open]')) return;
+    const form: SurveyForm | undefined = this.surveyForm();
+    const survey: SurveyView | undefined = this.surveyView();
+    if (!form && !survey) return;
+    event.preventDefault();
+    if (form) form.onCancelClick();
+    else survey?.closeRequested.emit();
+  }
 
   /**
    * Opens the newly published survey and closes the creation form.
